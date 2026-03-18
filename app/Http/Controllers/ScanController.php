@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\AturanHukuman;
+use App\Models\AturanHukum;
 use App\Models\BarcodeHarian;
 use App\Models\PelanggaranSiswa;
 use App\Models\Siswa;
@@ -35,7 +35,7 @@ class ScanController extends Controller
         }
 
         $request->validate([
-            'nis'   => 'required|exists:siswa,nis',
+            'nis' => 'required|exists:siswas,nis',
             'nilai' => 'nullable|integer|min:1',
         ]);
 
@@ -56,7 +56,9 @@ class ScanController extends Controller
         // Hitung nilai untuk akumulatif
         if ($barcode->jenisPelanggaran->is_akumulatif) {
             $totalSebelumnya = PelanggaranSiswa::where('siswa_id', $siswa->id)
-                ->whereHas('barcode', fn($q) =>
+                ->whereHas(
+                    'barcode',
+                    fn($q) =>
                     $q->where('jenis_pelanggaran_id', $barcode->jenis_pelanggaran_id)
                 )
                 ->sum('nilai');
@@ -71,12 +73,12 @@ class ScanController extends Controller
 
         // Simpan pelanggaran
         $pelanggaran = PelanggaranSiswa::create([
-            'siswa_id'   => $siswa->id,
+            'siswa_id' => $siswa->id,
             'barcode_id' => $barcode->id,
-            'aturan_id'  => $aturan?->id,
-            'nilai'      => $request->nilai ?? $barcode->nilai_default ?? 1,
-            'scan_at'    => now(),
-            'status'     => 'pending',
+            'aturan_id' => $aturan?->id,
+            'nilai' => $request->nilai ?? $barcode->nilai_default ?? 1,
+            'scan_at' => now(),
+            'status' => 'pending',
         ]);
 
         return view('scan.hasil', compact('siswa', 'barcode', 'pelanggaran', 'aturan'));

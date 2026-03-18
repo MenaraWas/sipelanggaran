@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BarcodeController;
+use App\Http\Controllers\ScanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,3 +26,6 @@ Route::get('/scan/{token}', function ($token) {
     // TODO: Buat controller/view untuk halaman form scan
     return "Halaman scan pelanggaran untuk token: " . $token;
 })->name('scan.form');
+
+Route::get('/scan/{token}', [ScanController::class, 'form'])->name('scan.form');
+Route::post('/scan/{token}', [ScanController::class, 'proses'])->name('scan.proses');
