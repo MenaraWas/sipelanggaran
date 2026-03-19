@@ -50,7 +50,7 @@ class AdminPanelProvider extends PanelProvider
         }
 
         return $panel
-            ->login()
+            ->login(\App\Filament\Pages\Auth\CustomLogin::class)
             ->profile(\App\Filament\Pages\CustomProfile::class, isSimple: false)
             ->darkMode(false)
             ->colors([
@@ -58,13 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -78,6 +74,26 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(
+                'panels::head.end',
+                fn() => new \Illuminate\Support\HtmlString('
+                    <link rel="manifest" href="/manifest.json">
+                    <meta name="theme-color" content="#1E3A5F">
+                    <meta name="apple-mobile-web-app-capable" content="yes">
+                    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+                    <meta name="apple-mobile-web-app-title" content="SIPELANGGARAN">
+                    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+                    <script>
+                        if ("serviceWorker" in navigator) {
+                            navigator.serviceWorker.register("/sw.js");
+                        }
+                    </script>
+                '),
+            )
+            ->renderHook(
+                'panels::body.end',
+                fn() => view('components.bottom-nav'),
+            );
     }
 }
