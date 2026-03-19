@@ -15,8 +15,8 @@ class BarcodeHarianResource extends Resource
 {
     protected static ?string $model = BarcodeHarian::class;
     protected static ?string $navigationIcon = 'heroicon-o-qr-code';
-    protected static ?string $navigationLabel = 'Barcode Harian';
-    protected static ?string $pluralModelLabel = 'Barcode Harian';
+    protected static ?string $navigationLabel = 'QR Code Harian';
+    protected static ?string $pluralModelLabel = 'QR Code Harian';
     protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
