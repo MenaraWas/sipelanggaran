@@ -22,10 +22,34 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $brandName = 'Sistem Pelanggaran Siswa';
+        $brandLogo = null;
+
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $setting = \App\Models\Setting::first();
+                if ($setting) {
+                    if ($setting->app_name)
+                        $brandName = $setting->app_name;
+                    if ($setting->instansi_logo)
+                        $brandLogo = asset('storage/' . $setting->instansi_logo);
+                }
+            }
+        } catch (\Throwable $th) {
+            // Abaikan error saat artisan migrate awal
+        }
+
+        $panel = $panel
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName($brandName);
+
+        if ($brandLogo) {
+            $panel->brandLogo($brandLogo)->brandLogoHeight('2.5rem');
+        }
+
+        return $panel
             ->login()
             ->profile(\App\Filament\Pages\CustomProfile::class, isSimple: false)
             ->darkMode(false)

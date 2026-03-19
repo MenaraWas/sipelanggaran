@@ -22,10 +22,12 @@ Route::get('/', function () {
 Route::get('/barcode/{token}', [BarcodeController::class, 'show'])
     ->name('barcode.show');
 
-Route::get('/scan/{token}', function ($token) {
-    // TODO: Buat controller/view untuk halaman form scan
-    return "Halaman scan pelanggaran untuk token: " . $token;
-})->name('scan.form');
+use App\Http\Controllers\SiswaAuthController;
 
-Route::get('/scan/{token}', [ScanController::class, 'form'])->name('scan.form');
-Route::post('/scan/{token}', [ScanController::class, 'proses'])->name('scan.proses');
+Route::get('/login-siswa', [SiswaAuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login-siswa', [SiswaAuthController::class, 'login'])->name('siswa.login.post');
+Route::post('/logout-siswa', [SiswaAuthController::class, 'logout'])->name('siswa.logout');
+
+Route::middleware('auth:siswa')->group(function () {
+    Route::get('/scan/{token}', [ScanController::class, 'proses'])->name('scan.proses');
+});

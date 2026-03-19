@@ -27,15 +27,21 @@ class AturanHukumResource extends Resource
                 ->options(JenisPelanggaran::pluck('nama', 'id'))
                 ->searchable(),
             Forms\Components\TextInput::make('min_nilai')
-                ->label('Nilai Minimum')
+                ->label('Rentang Minimal')
                 ->required()
                 ->numeric()
-                ->helperText('Menit / jumlah akumulasi minimum'),
+                ->helperText('Diisi batas menit keterlambatan / 1 jika tipe pelanggaran langsung.'),
             Forms\Components\TextInput::make('max_nilai')
-                ->label('Nilai Maksimum')
+                ->label('Rentang Maksimal')
                 ->numeric()
                 ->nullable()
-                ->helperText('Kosongkan jika tidak ada batas atas'),
+                ->helperText('Kosongkan jika tidak ada batas atas / khusus tipe langsung.'),
+            Forms\Components\TextInput::make('poin_pelanggaran')
+                ->label('Poin Skor Pelanggaran')
+                ->required()
+                ->numeric()
+                ->default(10)
+                ->helperText('Skor poin yang didapat siswa jika masuk kriteria rentang perhitungan ini.'),
             Forms\Components\Textarea::make('hukuman')
                 ->label('Hukuman')
                 ->required()
@@ -52,10 +58,14 @@ class AturanHukumResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('min_nilai')
-                    ->label('Min'),
+                    ->label('Rentang Min'),
                 Tables\Columns\TextColumn::make('max_nilai')
-                    ->label('Max')
-                    ->default('∞'),
+                    ->label('Rentang Max')
+                    ->default('~'),
+                Tables\Columns\TextColumn::make('poin_pelanggaran')
+                    ->label('Skor Poin')
+                    ->badge()
+                    ->color('danger'),
                 Tables\Columns\TextColumn::make('hukuman')
                     ->label('Hukuman')
                     ->limit(50),

@@ -24,27 +24,21 @@ class JenisPelanggaranResource extends Resource
                 ->label('Nama Pelanggaran')
                 ->required()
                 ->maxLength(100),
-            Forms\Components\Select::make('kategori')
-                ->label('Kategori')
+            Forms\Components\Select::make('tipe_perhitungan')
+                ->label('Tipe Perhitungan')
                 ->required()
                 ->options([
-                    'terlambat' => 'Keterlambatan',
-                    'sholat'    => 'Bolos Sholat',
-                    'seragam'   => 'Seragam',
-                    'kustom'    => 'Kustom',
-                ]),
-            Forms\Components\Select::make('satuan')
-                ->label('Satuan Nilai')
-                ->required()
-                ->options([
-                    'menit'    => 'Menit',
-                    'kali'     => 'Kali',
-                    'langsung' => 'Langsung',
+                    'langsung' => 'Langsung Beri Poin',
+                    'otomatis_waktu' => 'Otomatis (Hitung Waktu Keterlambatan)',
                 ])
-                ->default('langsung'),
-            Forms\Components\Toggle::make('is_akumulatif')
-                ->label('Hukuman Akumulatif?')
-                ->helperText('Aktifkan jika hukuman dihitung dari total pelanggaran sebelumnya'),
+                ->default('langsung')
+                ->live(),
+            Forms\Components\TimePicker::make('jam_batas_masuk')
+                ->label('Batas Jam Masuk')
+                ->displayFormat('H:i')
+                ->visible(fn(Forms\Get $get) => $get('tipe_perhitungan') === 'otomatis_waktu')
+                ->required(fn(Forms\Get $get) => $get('tipe_perhitungan') === 'otomatis_waktu')
+                ->helperText('Hanya diisi jika tipe perhitungan otomatis waktu.'),
         ]);
     }
 
@@ -55,19 +49,16 @@ class JenisPelanggaranResource extends Resource
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama Pelanggaran')
                     ->searchable(),
-                Tables\Columns\BadgeColumn::make('kategori')
-                    ->label('Kategori')
-                    ->colors([
-                        'warning' => 'terlambat',
-                        'danger'  => 'sholat',
-                        'info'    => 'seragam',
-                        'gray'    => 'kustom',
-                    ]),
-                Tables\Columns\TextColumn::make('satuan')
-                    ->label('Satuan'),
-                Tables\Columns\IconColumn::make('is_akumulatif')
-                    ->label('Akumulatif')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('tipe_perhitungan')
+                    ->label('Tipe')
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'langsung' => 'Langsung',
+                        'otomatis_waktu' => 'Otomatis Waktu',
+                        default => $state,
+                    }),
+                Tables\Columns\TextColumn::make('jam_batas_masuk')
+                    ->label('Batas Jam')
+                    ->default('-'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -78,9 +69,9 @@ class JenisPelanggaranResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListJenisPelanggarans::route('/'),
+            'index' => Pages\ListJenisPelanggarans::route('/'),
             'create' => Pages\CreateJenisPelanggaran::route('/create'),
-            'edit'   => Pages\EditJenisPelanggaran::route('/{record}/edit'),
+            'edit' => Pages\EditJenisPelanggaran::route('/{record}/edit'),
         ];
     }
 }

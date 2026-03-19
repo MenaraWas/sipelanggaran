@@ -17,7 +17,9 @@ class SiswaResource extends Resource
 {
     protected static ?string $model = Siswa::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
+
+    protected static ?string $navigationLabel = 'Siswa';
 
     public static function form(Form $form): Form
     {
@@ -35,6 +37,16 @@ class SiswaResource extends Resource
                 Forms\Components\TextInput::make('jurusan')
                     ->required()
                     ->maxLength(50),
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->unique(ignoreRecord: true)
+                    ->nullable()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->dehydrateStateUsing(fn($state) => \Illuminate\Support\Facades\Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $context): bool => $context === 'create'),
             ]);
     }
 

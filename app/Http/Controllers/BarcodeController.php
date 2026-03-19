@@ -13,7 +13,7 @@ class BarcodeController extends Controller
             ->firstOrFail();
 
         // URL yang akan di-encode ke dalam QR
-        $scanUrl = route('scan.form', $token);
+        $scanUrl = route('scan.proses', $token);
 
         $qrCode = QrCode::format('svg')
             ->size(300)

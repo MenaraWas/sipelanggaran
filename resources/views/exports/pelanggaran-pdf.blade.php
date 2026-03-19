@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        @page { margin: 1cm 1.5cm; } /* Atas/bawah 1cm, Kanan/kiri 1.5cm */
+        @page {
+            margin: 1cm 1.5cm;
+        }
+
+        /* Atas/bawah 1cm, Kanan/kiri 1.5cm */
         * {
             margin: 0;
             padding: 0;
@@ -142,9 +146,14 @@
 </head>
 
 <body>
+    @php
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sistem Pelanggaran Siswa';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+    @endphp
     <div class="header">
         <h1>LAPORAN PELANGGARAN SISWA</h1>
-        <p>MAN 2 Bantul — {{ now()->format('d F Y') }}</p>
+        <p>{{ $instansiName }} — {{ now()->format('d F Y') }}</p>
     </div>
 
     <table class="meta">
@@ -198,7 +207,7 @@
                 <th>Nama Siswa</th>
                 <th>Kelas</th>
                 <th>Pelanggaran</th>
-                <th>Nilai</th>
+                <th>Poin</th>
                 <th>Hukuman</th>
                 <th>Status</th>
                 <th>Waktu</th>
@@ -212,7 +221,7 @@
                     <td>{{ $p->siswa->nama }}</td>
                     <td>{{ $p->siswa->kelas }}</td>
                     <td>{{ $p->barcode->jenisPelanggaran->nama }}</td>
-                    <td>{{ $p->nilai }} {{ $p->barcode->jenisPelanggaran->satuan }}</td>
+                    <td>{{ $p->nilai }}</td>
                     <td>{{ $p->hukuman_aktif }}</td>
                     <td>
                         <span class="badge badge-{{ $p->status }}">
@@ -233,7 +242,7 @@
 
     <table class="footer">
         <tr>
-            <td style="text-align: left;">Sistem Pelanggaran Siswa — MAN 2 Bantul</td>
+            <td style="text-align: left;">{{ $appName }} — {{ $instansiName }}</td>
             <td style="text-align: right;">Total: {{ $pelanggaran->count() }} data</td>
         </tr>
     </table>

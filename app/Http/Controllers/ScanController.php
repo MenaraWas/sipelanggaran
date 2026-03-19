@@ -9,37 +9,19 @@ use Illuminate\Http\Request;
 
 class ScanController extends Controller
 {
-    // Halaman form scan (dipanggil setelah siswa scan QR)
-    public function form(string $token)
+    public function proses(string $token)
     {
         $barcode = BarcodeHarian::where('token', $token)
             ->with('jenisPelanggaran')
             ->firstOrFail();
 
+        // Jika barcode expired, tampilkan view expired
         if ($barcode->isExpired()) {
             return view('scan.expired');
         }
 
-        return view('scan.form', compact('barcode'));
-    }
-
-    // Proses submit form scan
-    public function proses(Request $request, string $token)
-    {
-        $barcode = BarcodeHarian::where('token', $token)
-            ->with('jenisPelanggaran')
-            ->firstOrFail();
-
-        if ($barcode->isExpired()) {
-            return redirect()->route('scan.form', $token);
-        }
-
-        $request->validate([
-            'nis' => 'required|exists:siswas,nis',
-            'nilai' => 'nullable|integer|min:1',
-        ]);
-
-        $siswa = Siswa::where('nis', $request->nis)->firstOrFail();
+        // Ambil data siswa dari session login
+        $siswa = auth('siswa')->user();
 
         // Cek apakah siswa sudah scan barcode ini hari ini
         $sudahScan = PelanggaranSiswa::where('siswa_id', $siswa->id)
@@ -50,33 +32,51 @@ class ScanController extends Controller
             return view('scan.sudah', compact('siswa', 'barcode'));
         }
 
-        // Tentukan nilai aktual
-        $nilai = $request->nilai ?? $barcode->nilai_default ?? 1;
+        $jenis = $barcode->jenisPelanggaran;
+        $nilaiIndikator = 1; // Default indikator/durasi
 
-        // Hitung nilai untuk akumulatif
-        if ($barcode->jenisPelanggaran->is_akumulatif) {
-            $totalSebelumnya = PelanggaranSiswa::where('siswa_id', $siswa->id)
-                ->whereHas(
-                    'barcode',
-                    fn($q) =>
-                    $q->where('jenis_pelanggaran_id', $barcode->jenis_pelanggaran_id)
-                )
-                ->sum('nilai');
-            $nilai = $totalSebelumnya + $nilai;
+        if ($jenis->tipe_perhitungan === 'otomatis_waktu' && $jenis->jam_batas_masuk) {
+            $waktuScan = now();
+
+            // Format waktu menjadi Y-m-d H:i:s
+            // Coba untuk memperbaiki jika input user memakai PM namun aslinya pagi
+            $formatJamMasuk = date('H:i:s', strtotime($jenis->jam_batas_masuk));
+            $jamBatas = \Carbon\Carbon::parse($waktuScan->format('Y-m-d') . ' ' . $formatJamMasuk);
+
+            // Jika siswa scan lewat dari jam batas
+            if ($waktuScan->greaterThan($jamBatas)) {
+                $nilaiIndikator = $waktuScan->diffInMinutes($jamBatas);
+            } else {
+                // Di sistem 1-click scan, kita tidak bisa return back() dengan error input form form.
+                // Kita harus mereject dengan layar pesan "Belum Waktunya" (bisa pinjam view expired atau bawaan).
+                // Menggunakan redirect back ->with() dan menangkap di session aslinya dari login, 
+                // tapi lebih aman throw error HTTP / view spesifik.
+                // Untuk kesederhanaan, tampilkan view pesan.
+                return response(view('scan.expired')->with('customMessage', 'Belum masuk waktu pelanggaran (batas: ' . date('H:i', strtotime($jenis->jam_batas_masuk)) . ').'));
+            }
         }
 
-        // Cari aturan hukuman yang sesuai
+        // Cari aturan hukuman yang sesuai dengan nilai indikator
         $aturan = AturanHukum::where('jenis_pelanggaran_id', $barcode->jenis_pelanggaran_id)
-            ->where('min_nilai', '<=', $nilai)
-            ->where(fn($q) => $q->whereNull('max_nilai')->orWhere('max_nilai', '>=', $nilai))
+            ->where('min_nilai', '<=', $nilaiIndikator)
+            ->where(fn($q) => $q->whereNull('max_nilai')->orWhere('max_nilai', '>=', $nilaiIndikator))
             ->first();
 
-        // Simpan pelanggaran
+        // Jika terlampau besar dari batas max_nilai semua aturan, ambil aturan dengan max_nilai tertinggi (paling berat)
+        if (!$aturan) {
+            $aturan = AturanHukum::where('jenis_pelanggaran_id', $barcode->jenis_pelanggaran_id)
+                ->orderByDesc('max_nilai')
+                ->first();
+        }
+
+        // Simpan pelanggaran dengan 'nilai' yang diisi skor poin
+        $poinPelanggaran = $aturan ? $aturan->poin_pelanggaran : 0;
+
         $pelanggaran = PelanggaranSiswa::create([
             'siswa_id' => $siswa->id,
             'barcode_id' => $barcode->id,
             'aturan_id' => $aturan?->id,
-            'nilai' => $request->nilai ?? $barcode->nilai_default ?? 1,
+            'nilai' => $poinPelanggaran,
             'scan_at' => now(),
             'status' => 'pending',
         ]);

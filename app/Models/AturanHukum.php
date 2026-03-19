@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AturanHukum extends Model
 {
-     protected $fillable = ['jenis_pelanggaran_id', 'min_nilai', 'max_nilai', 'hukuman'];
+    protected $fillable = ['jenis_pelanggaran_id', 'min_nilai', 'max_nilai', 'poin_pelanggaran', 'hukuman'];
 
     public function jenisPelanggaran()
     {

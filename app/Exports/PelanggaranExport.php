@@ -24,21 +24,30 @@ class PelanggaranExport implements
         protected ?string $dari = null,
         protected ?string $sampai = null,
         protected ?int $siswaId = null,
-    ) {}
+    ) {
+    }
 
     public function query()
     {
         return PelanggaranSiswa::with(['siswa', 'barcode.jenisPelanggaran', 'aturan'])
-            ->when($this->kelas, fn($q) =>
+            ->when(
+                $this->kelas,
+                fn($q) =>
                 $q->whereHas('siswa', fn($q) => $q->where('kelas', $this->kelas))
             )
-            ->when($this->siswaId, fn($q) =>
+            ->when(
+                $this->siswaId,
+                fn($q) =>
                 $q->where('siswa_id', $this->siswaId)
             )
-            ->when($this->dari, fn($q) =>
+            ->when(
+                $this->dari,
+                fn($q) =>
                 $q->whereDate('scan_at', '>=', $this->dari)
             )
-            ->when($this->sampai, fn($q) =>
+            ->when(
+                $this->sampai,
+                fn($q) =>
                 $q->whereDate('scan_at', '<=', $this->sampai)
             )
             ->latest('scan_at');
@@ -53,8 +62,7 @@ class PelanggaranExport implements
             'Kelas',
             'Jurusan',
             'Jenis Pelanggaran',
-            'Nilai',
-            'Satuan',
+            'Poin',
             'Hukuman',
             'Status',
             'Waktu Scan',
@@ -74,7 +82,6 @@ class PelanggaranExport implements
             $row->siswa->jurusan,
             $row->barcode->jenisPelanggaran->nama,
             $row->nilai,
-            $row->barcode->jenisPelanggaran->satuan,
             $row->hukuman_aktif,
             ucfirst($row->status),
             $row->scan_at->format('d M Y, H:i'),

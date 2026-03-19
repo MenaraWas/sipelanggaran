@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="theme-color" content="#1E3A5F">
     <title>Pelanggaran Tercatat</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>* { -webkit-tap-highlight-color: transparent; }</style>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
 </head>
+
 <body class="min-h-screen bg-slate-100 flex flex-col">
 
+    @php
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sistem Pelanggaran Siswa';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+    @endphp
     {{-- Top bar --}}
     <div class="bg-[#1E3A5F] text-white px-4 py-3 flex items-center gap-3">
         <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         </div>
         <div>
-            <p class="text-xs text-white/60 leading-none">MAN 2 Bantul</p>
+            <p class="text-xs text-white/60 leading-none">{{ $instansiName }}</p>
             <p class="text-sm font-semibold leading-tight">Pelanggaran Tercatat</p>
         </div>
     </div>
@@ -31,7 +42,7 @@
             <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
             <h1 class="text-lg font-bold text-slate-800">Pelanggaran Tercatat</h1>
@@ -58,35 +69,33 @@
                         {{ $barcode->jenisPelanggaran->nama }}
                     </span>
                 </div>
-                @if($pelanggaran->nilai > 1)
-                <div class="flex justify-between items-center px-4 py-3">
-                    <span class="text-sm text-slate-500">Durasi</span>
-                    <span class="text-sm font-semibold text-slate-800">
-                        {{ $pelanggaran->nilai }} {{ $barcode->jenisPelanggaran->satuan }}
+                <div class="flex justify-between items-center px-4 py-3 bg-red-50">
+                    <span class="text-sm font-bold text-red-600 uppercase tracking-wider">Skor Poin</span>
+                    <span class="text-lg font-bold text-red-700">
+                        +{{ $pelanggaran->nilai }}
                     </span>
                 </div>
-                @endif
             </div>
         </div>
 
         {{-- Hukuman --}}
         @if($aturan)
-        <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-4">
-            <p class="text-xs font-bold text-red-400 uppercase tracking-widest mb-1">Hukuman</p>
-            <p class="text-base font-bold text-red-700">{{ $aturan->hukuman }}</p>
-        </div>
+            <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-4">
+                <p class="text-xs font-bold text-red-400 uppercase tracking-widest mb-1">Hukuman</p>
+                <p class="text-base font-bold text-red-700">{{ $aturan->hukuman }}</p>
+            </div>
         @else
-        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4">
-            <p class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Hukuman</p>
-            <p class="text-sm text-amber-700">Akan ditentukan oleh pihak kesiswaan.</p>
-        </div>
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4">
+                <p class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Hukuman</p>
+                <p class="text-sm text-amber-700">Akan ditentukan oleh pihak kesiswaan.</p>
+            </div>
         @endif
 
         {{-- Instruksi --}}
         <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex gap-3">
             <svg class="w-5 h-5 text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p class="text-xs text-blue-700 leading-relaxed">
                 Silakan temui <strong>guru piket</strong> atau <strong>pihak kesiswaan</strong>
@@ -97,4 +106,5 @@
     </div>
 
 </body>
+
 </html>

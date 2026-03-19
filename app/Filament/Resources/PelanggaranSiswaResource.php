@@ -37,8 +37,8 @@ class PelanggaranSiswaResource extends Resource
             Forms\Components\Select::make('status')
                 ->label('Status')
                 ->options([
-                    'pending'      => 'Pending',
-                    'selesai'      => 'Selesai',
+                    'pending' => 'Pending',
+                    'selesai' => 'Selesai',
                     'dikecualikan' => 'Dikecualikan',
                 ])
                 ->default('pending'),
@@ -67,7 +67,7 @@ class PelanggaranSiswaResource extends Resource
                     ->colors([
                         'warning' => 'pending',
                         'success' => 'selesai',
-                        'gray'    => 'dikecualikan',
+                        'gray' => 'dikecualikan',
                     ]),
                 Tables\Columns\TextColumn::make('scan_at')
                     ->label('Waktu Scan')
@@ -77,8 +77,8 @@ class PelanggaranSiswaResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'pending'      => 'Pending',
-                        'selesai'      => 'Selesai',
+                        'pending' => 'Pending',
+                        'selesai' => 'Selesai',
                         'dikecualikan' => 'Dikecualikan',
                     ]),
                 Tables\Filters\Filter::make('tanggal')
@@ -94,16 +94,47 @@ class PelanggaranSiswaResource extends Resource
             ])
             ->defaultSort('scan_at', 'desc')
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('selesaikan')
+                    ->label('Selesai')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Tandai Selesai?')
+                    ->modalDescription('Apakah Anda yakin ingin menandai pelanggaran ini sebagai sudah selesai?')
+                    ->action(fn(PelanggaranSiswa $record) => $record->update(['status' => 'selesai']))
+                    ->visible(fn(PelanggaranSiswa $record) => $record->status === 'pending'),
+
+                Tables\Actions\Action::make('kecualikan')
+                    ->label('Kecualikan')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->modalHeading('Kecualikan Pelanggaran?')
+                    ->modalDescription('Pelanggaran ini akan dikecualikan dan tidak dihitung.')
+                    ->action(fn(PelanggaranSiswa $record) => $record->update(['status' => 'dikecualikan']))
+                    ->visible(fn(PelanggaranSiswa $record) => $record->status === 'pending'),
+
+                Tables\Actions\Action::make('pending')
+                    ->label('Batalkan')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Kembalikan ke Pending?')
+                    ->modalDescription('Status pelanggaran akan dikembalikan ke pending.')
+                    ->action(fn(PelanggaranSiswa $record) => $record->update(['status' => 'pending']))
+                    ->visible(fn(PelanggaranSiswa $record) => in_array($record->status, ['selesai', 'dikecualikan'])),
+
+                Tables\Actions\EditAction::make()
+                    ->iconButton(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListPelanggaranSiswas::route('/'),
+            'index' => Pages\ListPelanggaranSiswas::route('/'),
             'create' => Pages\CreatePelanggaranSiswa::route('/create'),
-            'edit'   => Pages\EditPelanggaranSiswa::route('/{record}/edit'),
+            'edit' => Pages\EditPelanggaranSiswa::route('/{record}/edit'),
         ];
     }
 }

@@ -9,9 +9,7 @@ use App\Models\BarcodeHarian;
 
 class JenisPelanggaran extends Model
 {
-    protected $fillable = ['nama', 'kategori', 'satuan', 'is_akumulatif'];
-
-    protected $casts = ['is_akumulatif' => 'boolean'];
+    protected $fillable = ['nama', 'tipe_perhitungan', 'jam_batas_masuk'];
 
     public function aturanHukum()
     {

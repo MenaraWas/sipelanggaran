@@ -31,7 +31,15 @@
     <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-xs w-full text-center">
 
         {{-- Header --}}
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">MAN 2 Bantul</p>
+        @php
+            $setting = \App\Models\Setting::first();
+            $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+            $logoUrl = $setting && $setting->instansi_logo ? asset('storage/' . $setting->instansi_logo) : null;
+        @endphp
+        @if($logoUrl)
+            <img src="{{ $logoUrl }}" alt="Logo" class="h-10 object-contain mx-auto mb-2 drop-shadow-sm">
+        @endif
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">{{ $instansiName }}</p>
         <h1 class="text-xl font-bold text-slate-800 mb-0.5">
             {{ $barcode->jenisPelanggaran->nama }}
         </h1>
