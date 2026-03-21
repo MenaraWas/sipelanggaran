@@ -10,6 +10,20 @@ class EditSiswa extends EditRecord
 {
     protected static string $resource = SiswaResource::class;
 
+    protected static string $view = 'filament.pages.edit-siswa';
+
+    public function getViewData(): array
+    {
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sistem Pelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        $record = $this->record;
+
+        return compact('appName', 'instansiName', 'user', 'record');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

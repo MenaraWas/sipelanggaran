@@ -2,6 +2,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\JenisPelanggaranResource\Pages;
+use App\Filament\Resources\JenisPelanggaranResource\RelationManagers;
 use App\Models\JenisPelanggaran;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -64,6 +65,13 @@ class JenisPelanggaranResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\AturanHukumRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

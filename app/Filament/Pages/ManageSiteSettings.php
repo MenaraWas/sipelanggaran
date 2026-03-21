@@ -21,6 +21,16 @@ class ManageSiteSettings extends Page implements HasForms
 
     protected static string $view = 'filament.pages.manage-site-settings';
 
+    public function getViewData(): array
+    {
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sipelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        return compact('appName', 'instansiName', 'user');
+    }
+
     protected static ?string $navigationGroup = 'Pengaturan';
 
     protected static ?string $title = 'Pengaturan Situs';

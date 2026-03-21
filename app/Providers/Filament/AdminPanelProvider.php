@@ -79,7 +79,7 @@ class AdminPanelProvider extends PanelProvider
                 'panels::head.end',
                 fn() => new \Illuminate\Support\HtmlString('
                     <link rel="manifest" href="/manifest.json">
-                    <meta name="theme-color" content="#1E3A5F">
+                    <meta name="theme-color" content="#515c71">
                     <meta name="apple-mobile-web-app-capable" content="yes">
                     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
                     <meta name="apple-mobile-web-app-title" content="SIPELANGGARAN">

@@ -10,6 +10,18 @@ class EditJenisPelanggaran extends EditRecord
 {
     protected static string $resource = JenisPelanggaranResource::class;
 
+    protected static string $view = 'filament.pages.edit-jenis-pelanggaran';
+
+    public function getViewData(): array
+    {
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sipelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        return compact('appName', 'instansiName', 'user');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

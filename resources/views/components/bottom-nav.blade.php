@@ -7,33 +7,44 @@
             <a href="{{ route('filament.admin.pages.dashboard') }}"
                 class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-transform active:scale-90
                       {{ request()->routeIs('filament.admin.pages.dashboard') ? 'bg-slate-100 text-slate-900' : 'text-slate-500' }}">
-                <span class="material-symbols-outlined" style="font-size:24px">dashboard</span>
-                <span class="text-[11px] font-medium tracking-wide uppercase"
-                    style="font-family:'Inter',sans-serif">Dashboard</span>
+                <span class="material-symbols-outlined" style="font-size:24px; {{ request()->routeIs('filament.admin.pages.dashboard') ? "font-variation-settings: 'FILL' 1" : "" }}">dashboard</span>
+                <span class="text-[11px] font-medium tracking-wide"
+                    style="font-family:'Inter',sans-serif">Home</span>
             </a>
+            {{-- Siswa (removed as per user request, it's in Lainnya) --}}
+            
             {{-- Pelanggaran --}}
             <a href="{{ route('filament.admin.resources.pelanggaran-siswas.index') }}"
                 class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-transform active:scale-90
                       {{ request()->routeIs('filament.admin.resources.pelanggaran-siswas.*') ? 'bg-slate-100 text-slate-900' : 'text-slate-500' }}">
-                <span class="material-symbols-outlined" style="font-size:24px">list_alt</span>
-                <span class="text-[11px] font-medium tracking-wide uppercase"
-                    style="font-family:'Inter',sans-serif">Violations</span>
+                <span class="material-symbols-outlined" style="font-size:24px; {{ request()->routeIs('filament.admin.resources.pelanggaran-siswas.*') ? "font-variation-settings: 'FILL' 1" : "" }}">list_alt</span>
+                <span class="text-[11px] font-medium tracking-wide"
+                    style="font-family:'Inter',sans-serif">Rekap</span>
             </a>
             {{-- Barcode --}}
             <a href="{{ route('filament.admin.resources.barcode-harians.index') }}"
                 class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-transform active:scale-90
                       {{ request()->routeIs('filament.admin.resources.barcode-harians.*') ? 'bg-slate-100 text-slate-900' : 'text-slate-500' }}">
-                <span class="material-symbols-outlined" style="font-size:24px">qr_code_scanner</span>
-                <span class="text-[11px] font-medium tracking-wide uppercase"
-                    style="font-family:'Inter',sans-serif">QR Code</span>
+                <span class="material-symbols-outlined" style="font-size:24px; {{ request()->routeIs('filament.admin.resources.barcode-harians.*') ? "font-variation-settings: 'FILL' 1" : "" }}">qr_code_scanner</span>
+                <span class="text-[11px] font-medium tracking-wide"
+                    style="font-family:'Inter',sans-serif">Barcode</span>
             </a>
             {{-- Lainnya --}}
+            @php
+                $isMoreActive = request()->is('admin/more') || 
+                               request()->routeIs('filament.admin.resources.siswas.*') || 
+                               request()->routeIs('filament.admin.resources.jenis-pelanggarans.*') || 
+                               request()->routeIs('filament.admin.resources.aturan-hukums.*') ||
+                               request()->is('admin/manage-site-settings') ||
+                               request()->is('admin/profile') ||
+                               request()->routeIs('filament.admin.pages.export-laporan');
+            @endphp
             <a href="/admin/more"
                 class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-transform active:scale-90
-                      {{ request()->is('admin/more') ? 'bg-slate-100 text-slate-900' : 'text-slate-500' }}">
-                <span class="material-symbols-outlined" style="font-size:24px">more_horiz</span>
-                <span class="text-[11px] font-medium tracking-wide uppercase"
-                    style="font-family:'Inter',sans-serif">More</span>
+                      {{ $isMoreActive ? 'bg-slate-100 text-slate-900' : 'text-slate-500' }}">
+                <span class="material-symbols-outlined" style="font-size:24px; {{ $isMoreActive ? "font-variation-settings: 'FILL' 1" : "" }}">more_horiz</span>
+                <span class="text-[11px] font-medium tracking-wide"
+                    style="font-family:'Inter',sans-serif">Lainnya</span>
             </a>
         </div>
     </nav>

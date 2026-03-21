@@ -24,6 +24,16 @@ class ExportLaporan extends Page implements HasForms
     protected static ?int $navigationSort = 6;
     protected static string $view = 'filament.pages.export-laporan';
 
+    public function getViewData(): array
+    {
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sipelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        return compact('appName', 'instansiName', 'user');
+    }
+
     public ?array $data = [];
 
     public function mount(): void
