@@ -39,20 +39,7 @@
                 <span class="bn-label">Rekap</span>
             </a>
 
-            {{-- Statistik --}}
-            <a href="{{ route('filament.admin.pages.statistik-pelanggaran') }}"
-                class="bn-item {{ request()->routeIs('filament.admin.pages.statistik-pelanggaran') ? 'bn-active' : '' }}">
-                @if(request()->routeIs('filament.admin.pages.statistik-pelanggaran'))
-                    <svg class="bn-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
-                    </svg>
-                @else
-                    <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h4v6H3zm6-8h4v14H9zm6 8h4v6h-4z"/>
-                    </svg>
-                @endif
-                <span class="bn-label">Statistik</span>
-            </a>
+            
 
             {{-- Barcode (center, elevated) --}}
             <a href="{{ route('filament.admin.resources.barcode-harians.index') }}"
@@ -68,6 +55,21 @@
                     </svg>
                 </div>
                 <span class="bn-label bn-label-center">Barcode</span>
+            </a>
+
+            {{-- Statistik --}}
+            <a href="{{ route('filament.admin.pages.statistik-pelanggaran') }}"
+                class="bn-item {{ request()->routeIs('filament.admin.pages.statistik-pelanggaran') ? 'bn-active' : '' }}">
+                @if(request()->routeIs('filament.admin.pages.statistik-pelanggaran'))
+                    <svg class="bn-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+                    </svg>
+                @else
+                    <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h4v6H3zm6-8h4v14H9zm6 8h4v6h-4z"/>
+                    </svg>
+                @endif
+                <span class="bn-label">Statistik</span>
             </a>
 
             {{-- Lainnya --}}
