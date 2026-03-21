@@ -3,21 +3,13 @@
     <div class="ep-wrapper">
 
         {{-- TopAppBar --}}
-        <header class="ep-topbar">
-            <div class="flex items-center gap-3">
-                <a href="/admin/pelanggaran-siswas"
-                   class="hover:bg-slate-100 transition-colors p-2 rounded-xl active:scale-95 duration-200 text-slate-700">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </a>
-                <h1 class="font-semibold text-lg tracking-tight text-slate-700">Edit Pelanggaran</h1>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="text-slate-400 text-xs font-medium">ID: #{{ $record->id }}</span>
-                <div class="w-9 h-9 rounded-full bg-[#6a758a] flex items-center justify-center text-white font-bold text-xs shadow-sm">
-                    {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-                </div>
-            </div>
-        </header>
+        <x-md3-top-bar 
+            :title="$appName" 
+            :subtitle="$instansiName" 
+            icon="gavel" 
+            :user="$user"
+            backUrl="/admin/pelanggaran-siswas"
+        />
 
         {{-- Content --}}
         <main class="ep-main">
@@ -149,25 +141,9 @@
             margin: -1.5rem;
         }
 
-        /* Top Bar */
-        .ep-topbar {
-            position: sticky;
-            top: 0;
-            z-index: 45;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-        }
-
         /* Main Content */
         .ep-main {
-            padding: 2rem 1.5rem 7rem;
+            padding: 1rem 1.5rem 7rem;
             max-width: 1100px;
             margin: 0 auto;
         }

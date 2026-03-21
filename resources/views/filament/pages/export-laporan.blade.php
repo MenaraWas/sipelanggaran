@@ -1,20 +1,12 @@
 <div>
     <div class="el-wrapper">
         {{-- TopAppBar --}}
-        <header class="el-topbar">
-            <div class="flex items-center gap-3">
-                <div class="el-topbar-icon">
-                    <span class="material-symbols-outlined">download</span>
-                </div>
-                <div>
-                    <h1 class="el-topbar-title">{{ $appName }}</h1>
-                    <p class="el-topbar-sub">{{ $instansiName }}</p>
-                </div>
-            </div>
-            <div class="el-topbar-avatar">
-                {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-            </div>
-        </header>
+        <x-md3-top-bar 
+            :title="$appName" 
+            :subtitle="$instansiName" 
+            icon="download" 
+            :user="$user" 
+        />
 
         <main class="el-main">
             <section class="el-page-header">
@@ -64,18 +56,7 @@
         @media (max-width: 1023px) { .fi-topbar { display: none !important; } }
 
         .el-wrapper { font-family: 'Inter', sans-serif; background: #f8fafc; min-height: 100vh; margin: -1.5rem; }
-        .el-topbar {
-            position: sticky; top: 0; z-index: 45; height: 60px; padding: 0 20px;
-            background: rgba(248, 250, 252, 0.88); backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .el-topbar-icon { width: 34px; height: 34px; background: #515c71; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
-        .el-topbar-title { font-size: 15px; font-weight: 700; color: #191c1e; line-height: 1.2; }
-        .el-topbar-sub { font-size: 11px; color: #9da3ae; line-height: 1; }
-        .el-topbar-avatar { width: 34px; height: 34px; border-radius: 50%; background: #515c71; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
-
-        .el-main { max-width: 700px; margin: 0 auto; padding: 28px 20px 100px; }
+        .el-main { padding: 1rem 1.5rem 100px; max-width: 640px; margin: 0 auto; }
         .el-page-header { margin-bottom: 24px; }
         .el-eyebrow { font-size: 10px; font-weight: 800; color: #515c71; text-transform: uppercase; letter-spacing: 0.12em; }
         .el-title { font-size: 32px; font-weight: 900; color: #191c1e; letter-spacing: -0.04em; margin-top: 4px; }

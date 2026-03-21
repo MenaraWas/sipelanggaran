@@ -10,6 +10,18 @@ class EditAturanHukum extends EditRecord
 {
     protected static string $resource = AturanHukumResource::class;
 
+    protected static string $view = 'filament.pages.edit-aturan-hukum';
+
+    public function getViewData(): array
+    {
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sipelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        return compact('appName', 'instansiName', 'user');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

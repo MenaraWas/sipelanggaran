@@ -1,26 +1,11 @@
 <div class="bm-wrapper">
-    @php
-        $setting = \App\Models\Setting::first();
-        $appName = $setting->app_name ?? 'Sistem Pelanggaran';
-        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
-        $user = auth()->user();
-    @endphp
-
     {{-- TopAppBar --}}
-    <header class="bm-top-bar">
-        <div class="bm-top-title-group">
-            <span class="material-symbols-outlined text-slate-700" style="font-size:28px">gavel</span>
-            <div>
-                <h1 class="bm-top-title">{{ $appName }}</h1>
-                <p class="text-[11px] text-slate-400 font-medium -mt-1">{{ $instansiName }}</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <div class="bm-profile-circle shadow-sm">
-                {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-            </div>
-        </div>
-    </header>
+    <x-md3-top-bar 
+        :title="$appName" 
+        :subtitle="$instansiName" 
+        icon="qr_code_scanner" 
+        :user="$user" 
+    />
     {{-- Custom Styles --}}
     <style>
         .bm-wrapper {
@@ -30,54 +15,11 @@
             min-height: 100vh;
         }
         .bm-main {
-            padding: 5.5rem 1.5rem 8rem 1.5rem; /* Increased top padding for TopAppBar */
+            padding: 2.5rem 1.5rem 100px;
             max-width: 1024px;
             margin: 0 auto;
         }
         
-        /* TopAppBar Style */
-        .bm-top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 50;
-            background: rgba(248, 250, 252, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-        }
-        @media (min-width: 1024px) {
-            .bm-top-bar { left: 16rem; width: calc(100% - 16rem); } /* Adjust for sidebar on desktop if needed, though we hide it usually */
-        }
-        
-        .bm-top-title-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .bm-top-title {
-            font-weight: 700;
-            font-size: 1.125rem;
-            letter-spacing: -0.02em;
-            color: #1e293b;
-        }
-        .bm-profile-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 99px;
-            background: #d0e1fb;
-            color: #54647a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-        }
 
         /* Header Section */
         .bm-header {

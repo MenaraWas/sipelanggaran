@@ -1,16 +1,12 @@
 <div>
     <div class="ejp-wrapper">
-        <header class="ejp-topbar">
-            <div class="flex items-center gap-3">
-                <a href="/admin/jenis-pelanggarans" class="jp-back-btn">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </a>
-                <h1 class="jp-topbar-title">Edit Jenis Pelanggaran</h1>
-            </div>
-            <div class="jp-topbar-avatar">
-                {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-            </div>
-        </header>
+        <x-md3-top-bar 
+            :title="$appName" 
+            :subtitle="$instansiName" 
+            icon="edit_note" 
+            :user="$user"
+            backUrl="/admin/jenis-pelanggarans"
+        />
 
         <main class="ejp-main">
             <div class="ejp-grid">
@@ -83,18 +79,7 @@
         @media (max-width: 1023px) { .fi-topbar { display: none !important; } }
 
         .ejp-wrapper { font-family: 'Inter', sans-serif; background: #f7f9fb; min-height: 100vh; margin: -1.5rem; }
-        .ejp-topbar {
-            position: sticky; top: 0; z-index: 45; height: 60px; padding: 0 20px;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .jp-back-btn { p: 8px; border-radius: 10px; color: #424754; transition: background 0.2s; display: flex; }
-        .jp-back-btn:hover { background: #f1f3f5; }
-        .jp-topbar-title { font-size: 16px; font-weight: 700; color: #191c1e; }
-        .jp-topbar-avatar { width: 34px; height: 34px; border-radius: 50%; background: #515c71; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
-
-        .ejp-main { padding: 2rem 1.5rem; max-width: 1000px; margin: 0 auto; }
+        .ejp-main { padding: 1rem 1.5rem 100px; max-width: 1000px; margin: 0 auto; }
         
         .ejp-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
         @media (min-width: 1024px) { .ejp-grid { grid-template-columns: 2fr 1fr; } }

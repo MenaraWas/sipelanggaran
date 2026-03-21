@@ -1,20 +1,12 @@
 <div>
     <div class="ss-wrapper">
         {{-- TopAppBar --}}
-        <header class="ss-topbar">
-            <div class="flex items-center gap-3">
-                <div class="ss-topbar-icon">
-                    <span class="material-symbols-outlined">settings</span>
-                </div>
-                <div>
-                    <h1 class="ss-topbar-title">Pengaturan Situs</h1>
-                    <p class="ss-topbar-sub">{{ $appName }}</p>
-                </div>
-            </div>
-            <div class="ss-topbar-avatar">
-                {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-            </div>
-        </header>
+        <x-md3-top-bar 
+            :title="$appName" 
+            :subtitle="$instansiName" 
+            icon="settings" 
+            :user="$user" 
+        />
 
         <main class="ss-main">
             <section class="ss-page-header">
@@ -52,18 +44,7 @@
         @media (max-width: 1023px) { .fi-topbar { display: none !important; } }
 
         .ss-wrapper { font-family: 'Inter', sans-serif; background: #fdfdfd; min-height: 100vh; margin: -1.5rem; }
-        .ss-topbar {
-            position: sticky; top: 0; z-index: 45; height: 60px; padding: 0 20px;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .ss-topbar-icon { width: 34px; height: 34px; background: #515c71; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
-        .ss-topbar-title { font-size: 15px; font-weight: 700; color: #191c1e; line-height: 1.2; }
-        .ss-topbar-sub { font-size: 11px; color: #9da3ae; line-height: 1; }
-        .ss-topbar-avatar { width: 34px; height: 34px; border-radius: 50%; background: #515c71; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
-
-        .ss-main { max-width: 650px; margin: 0 auto; padding: 28px 20px 100px; }
+        .ss-main { padding: 1rem 1.5rem 100px; max-width: 640px; margin: 0 auto; }
         .ss-page-header { margin-bottom: 24px; }
         .ss-eyebrow { font-size: 10px; font-weight: 800; color: #515c71; text-transform: uppercase; letter-spacing: 0.12em; }
         .ss-title { font-size: 32px; font-weight: 900; color: #191c1e; letter-spacing: -0.04em; margin-top: 4px; }

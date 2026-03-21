@@ -10,6 +10,18 @@ class CreateBarcodeHarian extends CreateRecord
 {
     protected static string $resource = BarcodeHarianResource::class;
 
+    protected static string $view = 'filament.pages.create-barcode';
+
+    public function getViewData(): array
+    {
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sipelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        return compact('appName', 'instansiName', 'user');
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         // Gabungkan tanggal + jam expired menjadi full timestamp

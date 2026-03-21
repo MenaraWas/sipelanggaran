@@ -2,20 +2,12 @@
     <div class="jp-wrapper">
 
         {{-- TopAppBar --}}
-        <header class="jp-topbar">
-            <div class="flex items-center gap-3">
-                <div class="jp-topbar-icon">
-                    <span class="material-symbols-outlined">warning</span>
-                </div>
-                <div>
-                    <h1 class="jp-topbar-title">{{ $appName }}</h1>
-                    <p class="jp-topbar-sub">{{ $instansiName }}</p>
-                </div>
-            </div>
-            <div class="jp-topbar-avatar">
-                {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-            </div>
-        </header>
+        <x-md3-top-bar 
+        :title="$appName" 
+        :subtitle="$instansiName" 
+        icon="label" 
+        :user="$user" 
+    />
 
         {{-- Main Content --}}
         <main class="jp-main">
@@ -82,27 +74,7 @@
             margin: -1.5rem;
         }
 
-        .jp-topbar {
-            position: sticky; top: 0; z-index: 45;
-            height: 60px; padding: 0 20px;
-            background: rgba(245, 247, 250, 0.88);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        .jp-topbar-icon {
-            width: 34px; height: 34px; background: #515c71; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center; color: white;
-        }
-        .jp-topbar-title { font-size: 15px; font-weight: 700; color: #191c1e; line-height: 1.2; }
-        .jp-topbar-sub { font-size: 11px; color: #9da3ae; line-height: 1; }
-        .jp-topbar-avatar {
-            width: 34px; height: 34px; border-radius: 50%; background: #515c71;
-            color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;
-        }
-
-        .jp-main { max-width: 800px; margin: 0 auto; padding: 28px 20px 100px; }
+        .jp-main { max-width: 800px; margin: 0 auto; padding: 1rem 20px 100px; }
         
         .jp-page-header { margin-bottom: 24px; }
         .jp-eyebrow { font-size: 11px; font-weight: 700; color: #515c71; text-transform: uppercase; letter-spacing: 0.1em; }

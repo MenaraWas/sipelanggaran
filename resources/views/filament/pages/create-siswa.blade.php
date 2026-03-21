@@ -3,20 +3,13 @@
     <div class="cs-wrapper">
 
         {{-- TopAppBar --}}
-        <header class="cs-topbar">
-            <div class="flex items-center gap-3">
-                <a href="/admin/siswas"
-                   class="hover:bg-slate-100 transition-colors p-2 rounded-lg active:scale-95 duration-200 text-slate-700">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </a>
-                <h1 class="font-semibold text-lg tracking-tight text-slate-700">Tambah Siswa</h1>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-full bg-[#6a758a] flex items-center justify-center text-white font-bold text-xs shadow-sm">
-                    {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-                </div>
-            </div>
-        </header>
+        <x-md3-top-bar 
+            :title="$appName" 
+            :subtitle="$instansiName" 
+            icon="person_add" 
+            :user="$user"
+            backUrl="/admin/siswas"
+        />
 
         {{-- Content --}}
         <main class="cs-main">
@@ -81,23 +74,8 @@
             min-height: 100vh;
         }
 
-        .cs-topbar {
-            position: sticky;
-            top: 0;
-            z-index: 45;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-        }
-
         .cs-main {
-            padding: 2rem 1.5rem 7rem;
+            padding: 1rem 1.5rem 7rem;
             max-width: 720px;
             margin: 0 auto;
         }

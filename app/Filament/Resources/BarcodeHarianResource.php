@@ -88,6 +88,7 @@ class BarcodeHarianResource extends Resource
         return [
             'index'  => Pages\ListBarcodeHarians::route('/'),
             'create' => Pages\CreateBarcodeHarian::route('/create'),
+            'edit'   => Pages\EditBarcodeHarian::route('/{record}/edit'),
         ];
     }
 }

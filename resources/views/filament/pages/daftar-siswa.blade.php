@@ -1,23 +1,12 @@
 <div>
     <div class="ds-wrapper">
 
-        {{-- TopAppBar (mobile only) --}}
-        <header class="ds-topbar">
-            <div class="flex items-center gap-3">
-                <div class="ds-topbar-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="ds-topbar-title">{{ $appName }}</h1>
-                    <p class="ds-topbar-sub">{{ $instansiName }}</p>
-                </div>
-            </div>
-            <div class="ds-topbar-avatar">
-                {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-            </div>
-        </header>
+        <x-md3-top-bar 
+        :title="$appName" 
+        :subtitle="$instansiName" 
+        icon="groups" 
+        :user="$user" 
+    />
 
         {{-- Main Content --}}
         <main class="ds-main">
@@ -149,58 +138,6 @@
             min-height: 100vh;
             margin: -1.5rem;
             -webkit-font-smoothing: antialiased;
-        }
-
-        /* ── TOPBAR (mobile) ── */
-        .ds-topbar {
-            position: sticky;
-            top: 0;
-            z-index: 45;
-            height: 60px;
-            padding: 0 20px;
-            background: rgba(245, 247, 250, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .ds-topbar-icon {
-            width: 34px; height: 34px;
-            background: #515c71;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .ds-topbar-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #191c1e;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-        }
-
-        .ds-topbar-sub {
-            font-size: 11px;
-            color: #9da3ae;
-            font-weight: 500;
-            line-height: 1;
-        }
-
-        .ds-topbar-avatar {
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            background: #515c71;
-            color: white;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-            letter-spacing: 0.02em;
-            flex-shrink: 0;
         }
 
         /* ── MAIN ── */

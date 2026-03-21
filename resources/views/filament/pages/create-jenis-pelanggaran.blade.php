@@ -1,16 +1,12 @@
 <div>
     <div class="cjp-wrapper">
-        <header class="cjp-topbar">
-            <div class="flex items-center gap-3">
-                <a href="/admin/jenis-pelanggarans" class="jp-back-btn">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </a>
-                <h1 class="jp-topbar-title">Tambah Jenis Pelanggaran</h1>
-            </div>
-            <div class="jp-topbar-avatar">
-                {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
-            </div>
-        </header>
+        <x-md3-top-bar 
+            :title="$appName" 
+            :subtitle="$instansiName" 
+            icon="add_box" 
+            :user="$user"
+            backUrl="/admin/jenis-pelanggarans"
+        />
 
         <main class="cjp-main">
             <section class="cjp-form-section">
@@ -41,18 +37,7 @@
         @media (max-width: 1023px) { .fi-topbar { display: none !important; } }
 
         .cjp-wrapper { font-family: 'Inter', sans-serif; background: #f7f9fb; min-height: 100vh; margin: -1.5rem; }
-        .cjp-topbar {
-            position: sticky; top: 0; z-index: 45; height: 60px; padding: 0 20px;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .jp-back-btn { p: 8px; border-radius: 10px; color: #424754; transition: background 0.2s; display: flex; }
-        .jp-back-btn:hover { background: #f1f3f5; }
-        .jp-topbar-title { font-size: 16px; font-weight: 700; color: #191c1e; }
-        .jp-topbar-avatar { width: 34px; height: 34px; border-radius: 50%; background: #515c71; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
-
-        .cjp-main { padding: 2rem 1.5rem; max-width: 600px; margin: 0 auto; }
+        .cjp-main { padding: 1rem 1.5rem 100px; max-width: 640px; margin: 0 auto; }
         .cjp-header { margin-bottom: 1.5rem; }
         .cjp-title { font-size: 24px; font-weight: 900; color: #191c1e; letter-spacing: -0.03em; }
         .cjp-subtitle { font-size: 13px; color: #727785; }

@@ -35,7 +35,12 @@ class ListBarcodeHarians extends ListRecords
         $scannedToday = \App\Models\PelanggaranSiswa::whereDate('scan_at', today())->count();
         $totalToday = \App\Models\BarcodeHarian::whereDate('tanggal', today())->count();
 
-        return compact('barcodes', 'activeCount', 'scannedToday', 'totalToday');
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sipelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        return compact('barcodes', 'activeCount', 'scannedToday', 'totalToday', 'appName', 'instansiName', 'user');
     }
 
     protected function getHeaderActions(): array

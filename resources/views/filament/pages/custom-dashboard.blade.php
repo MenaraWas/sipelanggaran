@@ -8,21 +8,12 @@
     <div class="custom-dashboard">
 
         {{-- Top App Bar --}}
-        <header class="cd-topbar">
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-slate-700" style="font-size:28px">gavel</span>
-                <div>
-                    <h1 class="text-lg font-bold tracking-tight text-slate-900">{{ $appName }}</h1>
-                    <p class="text-[11px] text-slate-400 font-medium -mt-0.5">{{ $instansiName }}</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <div
-                    class="w-9 h-9 rounded-full bg-[#6a758a] flex items-center justify-center text-white font-bold text-xs shadow-sm">
-                    {{ strtoupper(substr($user->name ?? 'A', 0, 2)) }}
-                </div>
-            </div>
-        </header>
+        <x-md3-top-bar 
+            :title="$appName" 
+            :subtitle="$instansiName" 
+            icon="dashboard" 
+            :user="$user" 
+        />
 
         {{-- Content --}}
         <main class="cd-main">
@@ -148,38 +139,9 @@
         display: none !important;
     }
 
-    /* Hide Filament's topbar on mobile for this custom dashboard */
-    @media (max-width: 1023px) {
-        .fi-topbar {
-            display: none !important;
-        }
-    }
-
-    .custom-dashboard {
-        font-family: 'Inter', sans-serif;
-        margin: -1.5rem;
-        /* bleed into filament padding */
-    }
-
-    /* Top Bar */
-    .cd-topbar {
-        position: sticky;
-        top: 0;
-        z-index: 45;
-        background: rgba(248, 250, 252, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        height: 64px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 1.5rem;
-    }
-
     /* Main content area */
     .cd-main {
-        padding: 1.5rem;
+        padding: 1rem 1.5rem;
         padding-bottom: 7rem;
         max-width: 1200px;
         margin: 0 auto;
