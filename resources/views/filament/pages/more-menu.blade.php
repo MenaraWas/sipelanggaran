@@ -3,7 +3,7 @@
     <div class="mm-wrapper">
 
         {{-- TopAppBar --}}
-        <header class="mm-topbar">
+        <!-- <header class="mm-topbar">
             <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-slate-700" style="font-size:28px">gavel</span>
                 <div>
@@ -14,7 +14,13 @@
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-slate-400 hover:bg-slate-100 transition-colors p-2 rounded-xl cursor-pointer">notifications</span>
             </div>
-        </header>
+        </header> -->
+        <x-md3-top-bar 
+        :title="$appName" 
+        :subtitle="$instansiName" 
+        icon="more_horiz" 
+        :user="$user" 
+    />
 
         {{-- Content --}}
         <main class="mm-main">

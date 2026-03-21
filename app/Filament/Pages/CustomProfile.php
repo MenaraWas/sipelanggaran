@@ -10,6 +10,18 @@ use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 
 class CustomProfile extends BaseEditProfile
 {
+    protected static string $view = 'filament.pages.custom-profile';
+
+    public function getViewData(): array
+    {
+        $setting = \App\Models\Setting::first();
+        $appName = $setting->app_name ?? 'Sipelanggaran';
+        $instansiName = $setting->instansi_name ?? 'MAN 2 Bantul';
+        $user = auth()->user();
+
+        return compact('appName', 'instansiName', 'user');
+    }
+
     // Hanya mengatur form apa saja yang akan ditampilkan. Fitur simpan data biarkan Filament yang urus.
     public function form(Form $form): Form
     {

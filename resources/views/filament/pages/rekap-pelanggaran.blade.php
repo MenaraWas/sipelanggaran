@@ -9,7 +9,7 @@
     <div class="rp-wrapper">
 
         {{-- TopAppBar --}}
-        <header class="rp-topbar">
+        <!-- <header class="rp-topbar">
             <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-slate-700" style="font-size:28px">gavel</span>
                 <div>
@@ -22,7 +22,14 @@
                     {{ strtoupper(substr($user->name ?? 'AD', 0, 2)) }}
                 </div>
             </div>
-        </header>
+        </header> -->
+        <x-md3-top-bar 
+        :title="$appName" 
+        :subtitle="$instansiName" 
+        icon="assignment" 
+        :user="$user" 
+    />
+        
 
         {{-- Content --}}
         <main class="rp-main">
