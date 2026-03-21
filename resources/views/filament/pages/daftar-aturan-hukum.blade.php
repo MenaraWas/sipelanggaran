@@ -1,5 +1,5 @@
 <div>
-    <div class="dah-wrapper">
+    <div class="dah-wrapper md3-animate-page">
         <x-md3-top-bar 
             :title="$appName" 
             :subtitle="$instansiName" 
@@ -75,6 +75,9 @@
         .fi-page-header, .fi-page-header + div { display: none !important; }
         
         .dah-wrapper { font-family: 'Inter', sans-serif; background: #f8fafc; min-height: 100vh; margin: -1.5rem; }
+        @media (min-width: 1024px) {
+            .dah-wrapper { margin: 0; background: transparent; min-height: auto; }
+        }
         .dah-main { max-width: 900px; margin: 0 auto; padding: 1rem 1.5rem 100px; }
         
         .dah-page-header { margin-bottom: 2rem; }

@@ -6,7 +6,7 @@
     @endphp
 
     {{-- Custom Rekap Pelanggaran - Material Design 3 --}}
-    <div class="rp-wrapper">
+    <div class="rp-wrapper md3-animate-page">
 
         {{-- TopAppBar --}}
         <!-- <header class="rp-topbar">
@@ -138,11 +138,12 @@
         /* ===== REKAP PELANGGARAN STYLES ===== */
 
         /* Hide Filament's default header & breadcrumb */
-        .fi-page-header { display: none !important; }
+        .fi-page-header, .fi-page-header + div { display: none !important; }
 
         /* Hide Filament topbar on mobile */
         @media (max-width: 1023px) {
             .fi-topbar { display: none !important; }
+            .fi-sidebar, .fi-sidebar-close-overlay { display: none !important; }
         }
 
         .rp-wrapper {
@@ -469,7 +470,8 @@
         @media (min-width: 1024px) {
             .rp-topbar { display: none; }
             .rp-fab { display: none; }
-            .rp-wrapper { margin: -1.5rem -1.5rem 0 -1.5rem; }
+            .rp-wrapper { margin: 0; background: transparent; min-height: auto; }
+            .rp-main { padding: 2rem 0 80px; }
         }
     </style>
 

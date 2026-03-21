@@ -1,6 +1,6 @@
 <div>
     {{-- Custom More Menu - Material Design 3 --}}
-    <div class="mm-wrapper">
+    <div class="mm-wrapper md3-animate-page">
 
         {{-- TopAppBar --}}
         <!-- <header class="mm-topbar">
@@ -123,10 +123,11 @@
 
     <style>
         /* ===== MORE MENU STYLES ===== */
-        .fi-page-header { display: none !important; }
+        .fi-page-header, .fi-page-header + div { display: none !important; }
 
         @media (max-width: 1023px) {
             .fi-topbar { display: none !important; }
+            .fi-sidebar, .fi-sidebar-close-overlay { display: none !important; }
         }
 
         .mm-wrapper {
@@ -289,7 +290,8 @@
 
         @media (min-width: 1024px) {
             .mm-topbar { display: none; }
-            .mm-wrapper { margin: -1.5rem -1.5rem 0 -1.5rem; }
+            .mm-wrapper { margin: 0; background: transparent; min-height: auto; }
+            .mm-main { padding: 2rem 0 80px; }
         }
     </style>
 

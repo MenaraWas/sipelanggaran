@@ -1,5 +1,5 @@
 <div>
-    <div class="cp-wrapper">
+    <div class="cp-wrapper md3-animate-page">
         <x-md3-top-bar 
             :title="$appName" 
             :subtitle="$instansiName" 
@@ -37,7 +37,15 @@
 
     <style>
         .fi-page-header, .fi-page-header + div { display: none !important; }
+        @media (max-width: 1023px) {
+            .fi-topbar { display: none !important; }
+            .fi-sidebar, .fi-sidebar-close-overlay { display: none !important; }
+        }
         .cp-wrapper { font-family: 'Inter', sans-serif; background: #fdfdfd; min-height: 100vh; margin: -1.5rem; }
+        @media (min-width: 1024px) {
+            .cp-wrapper { margin: 0; background: transparent; min-height: auto; }
+            .cp-main { padding: 2rem 0 80px; }
+        }
         .cp-main { padding: 1rem 1.5rem 100px; max-width: 640px; margin: 0 auto; }
         
         .cp-header { margin-bottom: 2rem; }

@@ -1,5 +1,5 @@
 <div>
-    <div class="ds-wrapper">
+    <div class="ds-wrapper md3-animate-page">
 
         <x-md3-top-bar 
         :title="$appName" 
@@ -124,21 +124,13 @@
     </div>
 
     <style>
-        /* ── RESET FILAMENT ── */
-        .fi-page-header,
-        .fi-page-header + div { display: none !important; }
         @media (max-width: 1023px) {
             .fi-topbar { display: none !important; }
+            .fi-sidebar, .fi-sidebar-close-overlay { display: none !important; }
         }
 
         /* ── WRAPPER ── */
-        .ds-wrapper {
-            font-family: 'Inter', 'DM Sans', sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-            margin: -1.5rem;
-            -webkit-font-smoothing: antialiased;
-        }
+        .ds-wrapper { font-family: 'Inter', sans-serif; background: #f5f7fa; min-height: 100vh; margin: -1.5rem; }
 
         /* ── MAIN ── */
         .ds-main {
@@ -153,8 +145,8 @@
 
         @media (min-width: 1024px) {
             .ds-topbar { display: none; }
-            .ds-wrapper { margin: -1.5rem -1.5rem 0; }
-            .ds-main { padding: 40px 40px 80px; }
+            .ds-wrapper { margin: 0; background: transparent; min-height: auto; }
+            .ds-main { padding: 2rem 0 80px; }
         }
 
         /* ── PAGE HEADER ── */

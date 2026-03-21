@@ -1,4 +1,4 @@
-<div class="bm-wrapper">
+<div class="bm-wrapper md3-animate-page">
     {{-- TopAppBar --}}
     <x-md3-top-bar 
         :title="$appName" 
@@ -8,11 +8,16 @@
     />
     {{-- Custom Styles --}}
     <style>
-        .bm-wrapper {
-            font-family: 'Inter', sans-serif;
-            margin: -1.5rem;
-            background: #f7f9fb;
-            min-height: 100vh;
+        .fi-page-header, .fi-page-header + div { display: none !important; }
+        @media (max-width: 1023px) {
+            .fi-topbar { display: none !important; }
+            .fi-sidebar, .fi-sidebar-close-overlay { display: none !important; }
+        }
+        .bm-wrapper { font-family: 'Inter', sans-serif; margin: -1.5rem; background: #f7f9fb; min-height: 100vh; }
+        @media (min-width: 1024px) {
+            .bm-wrapper { margin: 0; background: transparent; min-height: auto; }
+            .bm-main { padding: 2rem 0 80px; }
+            .bm-fab { display: none; }
         }
         .bm-main {
             padding: 2.5rem 1.5rem 100px;

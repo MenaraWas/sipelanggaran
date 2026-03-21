@@ -25,7 +25,7 @@
         @endif
 
         <div>
-            <h1 class="md3-topbar-title">{{ $title ?? 'Sipelanggaran' }}</h1>
+            <h1 class="md3-topbar-title">{{ $title ?? 'Sistem Pelanggaran' }}</h1>
             @if($subtitle)
                 <p class="md3-topbar-sub">{{ $subtitle }}</p>
             @endif
@@ -38,11 +38,6 @@
 </header>
 
 <style>
-    /* Hide default Filament Topbar and Sidebar on mobile/tablet */
-    .fi-topbar, .fi-sidebar { display: none !important; }
-    
-    /* Ensure no double padding on main content */
-    .fi-main { padding-top: 0 !important; }
 
     .md3-topbar {
         position: sticky; top: 0; z-index: 50; height: 64px; padding: 0 20px;
@@ -71,5 +66,28 @@
 
     @media (min-width: 1024px) {
         /* On desktop, keep the custom topbar width aligned if needed, but usually we cover full width now */
+        .md3-topbar {
+            display: none !important;
+        }
     }
+
+     @media (max-width: 1023px) {
+        .fi-topbar { display: none !important; }
+        .fi-sidebar, .fi-sidebar-close-overlay { display: none !important; }
+        .fi-main { padding-top: 0 !important; } /* Di mobile, Top Bar MD3 menempel di atas */
+    }
+
+    /* ── PAGE TRANSITIONS ── */
+    @keyframes md3-page-enter {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .md3-animate-page {
+        animation: md3-page-enter 0.5s cubic-bezier(0.2, 0, 0, 1) backwards;
+    }
+    
+    /* Optimized for list items stagger (optional) */
+    .md3-stagger-1 { animation-delay: 0.1s; }
+    .md3-stagger-2 { animation-delay: 0.15s; }
+    .md3-stagger-3 { animation-delay: 0.2s; }
 </style>

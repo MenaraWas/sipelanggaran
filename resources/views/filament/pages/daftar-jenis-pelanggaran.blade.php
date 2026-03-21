@@ -1,5 +1,5 @@
 <div>
-    <div class="jp-wrapper">
+    <div class="jp-wrapper md3-animate-page">
 
         {{-- TopAppBar --}}
         <x-md3-top-bar 
@@ -65,7 +65,10 @@
 
     <style>
         .fi-page-header, .fi-page-header + div { display: none !important; }
-        @media (max-width: 1023px) { .fi-topbar { display: none !important; } }
+        @media (max-width: 1023px) { 
+            .fi-topbar { display: none !important; }
+            .fi-sidebar, .fi-sidebar-close-overlay { display: none !important; }
+        }
 
         .jp-wrapper {
             font-family: 'Inter', sans-serif;
@@ -116,8 +119,9 @@
 
         @media (min-width: 1024px) {
             .jp-topbar { display: none; }
-            .jp-wrapper { margin: -1.5rem -1.5rem 0; }
-            .jp-fab { right: 40px; bottom: 40px; }
+            .jp-wrapper { margin: 0; background: transparent; min-height: auto; }
+            .jp-main { padding: 2rem 0 80px; }
+            .jp-fab { display: none; }
         }
     </style>
 
