@@ -20,4 +20,9 @@ class JenisPelanggaran extends Model
     {
         return $this->hasMany(BarcodeHarian::class);
     }
+
+    public function pelanggaran()
+    {
+        return $this->hasManyThrough(PelanggaranSiswa::class, BarcodeHarian::class, 'jenis_pelanggaran_id', 'barcode_id');
+    }
 }

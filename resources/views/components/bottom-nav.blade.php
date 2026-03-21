@@ -39,6 +39,21 @@
                 <span class="bn-label">Rekap</span>
             </a>
 
+            {{-- Statistik --}}
+            <a href="{{ route('filament.admin.pages.statistik-pelanggaran') }}"
+                class="bn-item {{ request()->routeIs('filament.admin.pages.statistik-pelanggaran') ? 'bn-active' : '' }}">
+                @if(request()->routeIs('filament.admin.pages.statistik-pelanggaran'))
+                    <svg class="bn-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+                    </svg>
+                @else
+                    <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h4v6H3zm6-8h4v14H9zm6 8h4v6h-4z"/>
+                    </svg>
+                @endif
+                <span class="bn-label">Statistik</span>
+            </a>
+
             {{-- Barcode (center, elevated) --}}
             <a href="{{ route('filament.admin.resources.barcode-harians.index') }}"
                 class="bn-item bn-item-center {{ request()->routeIs('filament.admin.resources.barcode-harians.*') ? 'bn-center-active' : '' }}">
@@ -61,6 +76,7 @@
                     request()->routeIs('filament.admin.resources.siswas.*') ||
                     request()->routeIs('filament.admin.resources.jenis-pelanggarans.*') ||
                     request()->routeIs('filament.admin.resources.aturan-hukums.*') ||
+                    request()->routeIs('filament.admin.pages.statistik-pelanggaran') ||
                     request()->is('admin/manage-site-settings') ||
                     request()->is('admin/profile') ||
                     request()->routeIs('filament.admin.pages.export-laporan');
