@@ -232,9 +232,35 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 9px;
             font-weight: 600;
-            color: #64748b;
             letter-spacing: 0.25em;
         }
+
+        /* Card Actions */
+        .bm-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 1rem;
+        }
+        .bm-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+        .bm-action-btn span { font-size: 18px; }
+        .bm-action-btn.view { color: #515c71; }
+        .bm-action-btn.view:hover { background: #f1f5f9; }
+        .bm-action-btn.edit { color: #0284c7; }
+        .bm-action-btn.edit:hover { background: #f0f9ff; }
+        .bm-action-btn.delete { color: #ef4444; }
+        .bm-action-btn.delete:hover { background: #fef2f2; }
 
         /* FAB */
         .bm-fab {
@@ -314,10 +340,8 @@
                         $isExpired = $barcode->isExpired();
                         $isAlt = $index % 2 !== 0;
                     @endphp
-                    <a href="{{ route('barcode.show', $barcode->token) }}" 
-                       target="_blank"
-                       class="bm-card {{ $isAlt ? 'alt' : '' }}">
-                        <div class="bm-card-info">
+                    <div class="bm-card {{ $isAlt ? 'alt' : '' }}">
+                        <div class="bm-card-info flex-1">
                             <div class="bm-card-icon">
                                 <span class="material-symbols-outlined">qr_code_2</span>
                             </div>
@@ -331,13 +355,30 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="bm-barcode-wrap">
-                            <div class="bm-barcode-strip">
-                                <div class="qr-pattern"></div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="bm-barcode-wrap hidden sm:flex">
+                                <div class="bm-barcode-strip">
+                                    <div class="qr-pattern"></div>
+                                </div>
+                                <span class="bm-barcode-label">QR-{{ substr($barcode->token, 0, 6) }}</span>
                             </div>
-                            <span class="bm-barcode-label">QR-{{ substr($barcode->token, 0, 6) }}</span>
+
+                            <div class="bm-card-actions">
+                                <a href="{{ route('barcode.show', $barcode->token) }}" target="_blank" class="bm-action-btn view" title="Lihat/Cetak">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </a>
+                                <a href="{{ \App\Filament\Resources\BarcodeHarianResource::getUrl('edit', ['record' => $barcode->id]) }}" class="bm-action-btn edit" title="Edit">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </a>
+                                <button wire:click="deleteBarcode({{ $barcode->id }})" 
+                                        wire:confirm="Hapus barcode ini?"
+                                        class="bm-action-btn delete" title="Hapus">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
                         </div>
-                    </a>
+                    </div>
                 @endforeach
 
                 @if($barcodes->isEmpty())

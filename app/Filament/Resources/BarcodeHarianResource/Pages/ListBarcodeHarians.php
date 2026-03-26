@@ -4,6 +4,7 @@ namespace App\Filament\Resources\BarcodeHarianResource\Pages;
 
 use App\Filament\Resources\BarcodeHarianResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 class ListBarcodeHarians extends ListRecords
@@ -41,6 +42,17 @@ class ListBarcodeHarians extends ListRecords
         $user = auth()->user();
 
         return compact('barcodes', 'activeCount', 'scannedToday', 'totalToday', 'appName', 'instansiName', 'user');
+    }
+
+    public function deleteBarcode($id)
+    {
+        $barcode = \App\Models\BarcodeHarian::findOrFail($id);
+        $barcode->delete();
+
+        Notification::make()
+            ->title('Barcode Berhasil Dihapus')
+            ->success()
+            ->send();
     }
 
     protected function getHeaderActions(): array

@@ -20,12 +20,13 @@ Route::get('/', function () {
 });
 
 Route::get('/barcode/{token}', [BarcodeController::class, 'show'])
-    ->name('barcode.show');
+    ->name('barcode.show')
+    ->middleware('auth');
 
 use App\Http\Controllers\SiswaAuthController;
 
 Route::get('/login-siswa', [SiswaAuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login-siswa', [SiswaAuthController::class, 'login'])->name('siswa.login.post');
+Route::post('/login-siswa', [SiswaAuthController::class, 'login'])->name('siswa.login.post')->middleware('throttle:5,1');
 Route::post('/logout-siswa', [SiswaAuthController::class, 'logout'])->name('siswa.logout');
 
 Route::middleware('auth:siswa')->group(function () {
