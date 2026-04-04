@@ -53,6 +53,7 @@ class SiswaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('3s')
             ->columns([
                 Tables\Columns\TextColumn::make('nis')
                     ->searchable(),

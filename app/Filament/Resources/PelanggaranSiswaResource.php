@@ -48,6 +48,7 @@ class PelanggaranSiswaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('3s')
             ->columns([
                 Tables\Columns\TextColumn::make('siswa.nama')
                     ->label('Nama Siswa')
