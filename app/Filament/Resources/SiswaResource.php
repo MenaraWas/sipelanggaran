@@ -65,7 +65,9 @@ class SiswaResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('pelanggaran_count')
                     ->label('Total Pelanggaran')
-                    ->counts('pelanggaran')
+                    ->counts([
+                        'pelanggaran' => fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('status', '!=', 'dikecualikan'),
+                    ])
                     ->sortable()
                     ->badge()
                     ->color('danger'),

@@ -30,5 +30,6 @@ Route::post('/login-siswa', [SiswaAuthController::class, 'login'])->name('siswa.
 Route::post('/logout-siswa', [SiswaAuthController::class, 'logout'])->name('siswa.logout');
 
 Route::middleware('auth:siswa')->group(function () {
-    Route::get('/scan/{token}', [ScanController::class, 'proses'])->name('scan.proses');
+    Route::get('/scan/{token}', [ScanController::class, 'konfirmasi'])->name('scan.konfirmasi');
+    Route::post('/scan/{token}', [ScanController::class, 'proses'])->name('scan.proses');
 });

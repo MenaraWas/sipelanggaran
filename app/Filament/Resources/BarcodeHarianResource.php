@@ -69,7 +69,9 @@ class BarcodeHarianResource extends Resource
                     ->getStateUsing(fn($record) => $record->isExpired()),
                 Tables\Columns\TextColumn::make('pelanggaran_count')
                     ->label('Total Scan')
-                    ->counts('pelanggaran')
+                    ->counts([
+                        'pelanggaran' => fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('status', '!=', 'dikecualikan'),
+                    ])
                     ->badge(),
             ])
             ->defaultSort('tanggal', 'desc')
