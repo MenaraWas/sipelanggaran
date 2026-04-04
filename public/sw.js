@@ -1,7 +1,5 @@
-const CACHE_NAME = 'sipelanggaran-v2';
+const CACHE_NAME = 'sipelanggaran-v3';
 const PRECACHE_URLS = [
-    '/admin',
-    '/admin/login',
     '/icons/icon-192.png',
     '/icons/icon-512.png'
 ];
@@ -24,23 +22,27 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch with Stale-While-Revalidate for Assets
+// Fetch: Network-First Strategy 
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
-    
-    // Ignore browser extensions
     if (!(event.request.url.indexOf('http') === 0)) return;
+    
+    // Jangan cache endpoint livewire
+    if (event.request.url.includes('/livewire/')) return;
 
     event.respondWith(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.match(event.request).then((cachedResponse) => {
-                const fetchedResponse = fetch(event.request).then((networkResponse) => {
+        // Coba fetch dari internet (Network) dulu
+        fetch(event.request)
+            .then((networkResponse) => {
+                // Simpan/update cache terbaru di background
+                return caches.open(CACHE_NAME).then((cache) => {
                     cache.put(event.request, networkResponse.clone());
                     return networkResponse;
                 });
-
-                return cachedResponse || fetchedResponse;
-            });
-        })
+            })
+            .catch(() => {
+                // Jika tidak ada koneksi internet, ambil dari Cache
+                return caches.match(event.request);
+            })
     );
 });
