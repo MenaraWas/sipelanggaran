@@ -30,7 +30,7 @@ class ScanAuthController extends Controller
             'email' => ['required', 'email'],
         ], [
             'email.required' => 'Email wajib diisi.',
-            'email.email'    => 'Format email tidak valid.',
+            'email.email' => 'Format email tidak valid.',
         ]);
 
         $email = strtolower(trim($request->email));
@@ -80,12 +80,12 @@ class ScanAuthController extends Controller
         }
 
         $request->validate([
-            'nama'    => ['required', 'string', 'max:100'],
-            'kelas'   => ['required', 'string', 'max:10'],
+            'nama' => ['required', 'string', 'max:100'],
+            'kelas' => ['required', 'string', 'max:10'],
             'jurusan' => ['required', 'string', 'max:50'],
         ], [
-            'nama.required'    => 'Nama lengkap wajib diisi.',
-            'kelas.required'   => 'Kelas wajib diisi.',
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'kelas.required' => 'Kelas wajib diisi.',
             'jurusan.required' => 'Jurusan wajib diisi.',
         ]);
 
@@ -99,7 +99,9 @@ class ScanAuthController extends Controller
         }
 
         // Buat akun baru dengan is_verified = false
+        // NIS diisi sementara agar tidak error NOT NULL — admin update saat verifikasi
         $siswa = Siswa::create([
+            'nis'         => 'REG-' . time(),
             'nama'        => $request->nama,
             'kelas'       => strtoupper($request->kelas),
             'jurusan'     => $request->jurusan,

@@ -26,8 +26,10 @@ class SiswaResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nis')
-                    ->required()
-                    ->maxLength(20),
+                    ->maxLength(20)
+                    ->nullable()
+                    ->unique(ignoreRecord: true)
+                    ->helperText('Kosongkan jika belum diketahui (siswa daftar sendiri).'),
                 Forms\Components\TextInput::make('nama')
                     ->required()
                     ->maxLength(100),
