@@ -11,6 +11,8 @@ class PelanggaranSiswa extends Model
         'siswa_id',
         'barcode_id',
         'aturan_id',
+        'alasan_id',
+        'alasan_custom',
         'nilai',
         'hukuman_override',
         'scan_at',
@@ -32,6 +34,19 @@ class PelanggaranSiswa extends Model
     public function aturan()
     {
         return $this->belongsTo(AturanHukum::class, 'aturan_id');
+    }
+
+    public function alasan()
+    {
+        return $this->belongsTo(AlasanPelanggaran::class, 'alasan_id');
+    }
+
+    public function getAlasanTeksAttribute(): ?string
+    {
+        if ($this->alasan_id) {
+            return $this->alasan?->teks;
+        }
+        return $this->alasan_custom;
     }
 
     public function getHukumanAktifAttribute(): string

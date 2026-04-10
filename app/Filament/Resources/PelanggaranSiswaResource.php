@@ -64,6 +64,11 @@ class PelanggaranSiswaResource extends Resource
                 Tables\Columns\TextColumn::make('hukuman_aktif')
                     ->label('Hukuman')
                     ->limit(40),
+                Tables\Columns\TextColumn::make('alasan_teks')
+                    ->label('Alasan')
+                    ->default('-')
+                    ->limit(35)
+                    ->tooltip(fn($record) => $record->alasan_teks),
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'warning' => 'pending',

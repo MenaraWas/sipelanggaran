@@ -27,7 +27,7 @@ class ScanController extends Controller
         return view('scan.konfirmasi', compact('siswa', 'barcode'));
     }
 
-    public function proses(string $token)
+    public function proses(Request $request, string $token)
     {
         $barcode = BarcodeHarian::where('token', $token)
             ->with('jenisPelanggaran')
@@ -71,21 +71,34 @@ class ScanController extends Controller
                 ->first();
         }
 
+        // Proses alasan
+        $alasanId   = null;
+        $alasanCustom = null;
+        $alasanInput = $request->input('alasan_id');
+
+        if ($alasanInput === 'lainnya') {
+            $alasanCustom = trim($request->input('alasan_custom'));
+        } elseif (!empty($alasanInput)) {
+            $alasanId = (int) $alasanInput;
+        }
+
         $pelanggaran = PelanggaranSiswa::create([
-            'siswa_id' => $siswa->id,
-            'barcode_id' => $barcode->id,
-            'aturan_id' => $aturan?->id,
-            'nilai' => $aturan ? $aturan->poin_pelanggaran : 0,
-            'scan_at' => now(),
-            'status' => 'pending',
+            'siswa_id'      => $siswa->id,
+            'barcode_id'    => $barcode->id,
+            'aturan_id'     => $aturan?->id,
+            'alasan_id'     => $alasanId,
+            'alasan_custom' => $alasanCustom,
+            'nilai'         => $aturan ? $aturan->poin_pelanggaran : 0,
+            'scan_at'       => now(),
+            'status'        => 'pending',
         ]);
 
         return view('scan.hasil', [
-            'status' => 'sukses',
-            'siswa' => $siswa,
-            'barcode' => $barcode,
+            'status'      => 'sukses',
+            'siswa'       => $siswa,
+            'barcode'     => $barcode,
             'pelanggaran' => $pelanggaran,
-            'aturan' => $aturan
+            'aturan'      => $aturan
         ]);
     }
 }

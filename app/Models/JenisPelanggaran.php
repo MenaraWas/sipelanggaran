@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\AturanHukum;
 use App\Models\BarcodeHarian;
+use App\Models\AlasanPelanggaran;
 
 class JenisPelanggaran extends Model
 {
@@ -24,5 +25,10 @@ class JenisPelanggaran extends Model
     public function pelanggaran()
     {
         return $this->hasManyThrough(PelanggaranSiswa::class, BarcodeHarian::class, 'jenis_pelanggaran_id', 'barcode_id');
+    }
+
+    public function alasanPelanggaran()
+    {
+        return $this->hasMany(AlasanPelanggaran::class)->orderBy('urutan');
     }
 }

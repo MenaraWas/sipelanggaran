@@ -20,6 +20,9 @@ class AnalitikPelanggaran extends Page
 
     protected static string $view = 'filament.pages.analistik-pelanggaran';
 
+    // Filter aktif untuk statistik alasan
+    public ?int $filterJenis = null;
+
     public function getViewData(): array
     {
         $now = Carbon::now();
@@ -55,12 +58,37 @@ class AnalitikPelanggaran extends Page
             ->get();
 
         // 4. Ranking Kelas Terbersih (Poin Terkecil)
-        // Kita hitung total poin per kelas dari tabel Siswa dan PelanggaranSiswa
         $classRanking = DB::table('siswas')
             ->leftJoin('pelanggaran_siswas', 'siswas.id', '=', 'pelanggaran_siswas.siswa_id')
             ->select('siswas.kelas', DB::raw('SUM(pelanggaran_siswas.nilai) as total_poin'), DB::raw('COUNT(pelanggaran_siswas.id) as total_kasus'))
             ->groupBy('siswas.kelas')
             ->orderBy('total_poin', 'asc')
+            ->take(10)
+            ->get();
+
+        // 5. Top Alasan (dengan filter jenis pelanggaran opsional)
+        $jenisList = JenisPelanggaran::orderBy('nama')->get();
+
+        // Alasan dari daftar admin (alasan_id tidak null)
+        $queryAlasan = DB::table('pelanggaran_siswas')
+            ->join('alasan_pelanggarans', 'pelanggaran_siswas.alasan_id', '=', 'alasan_pelanggarans.id')
+            ->join('barcode_harians', 'pelanggaran_siswas.barcode_id', '=', 'barcode_harians.id')
+            ->select('alasan_pelanggarans.teks as alasan', DB::raw('COUNT(*) as total'))
+            ->when($this->filterJenis, fn($q) => $q->where('barcode_harians.jenis_pelanggaran_id', $this->filterJenis))
+            ->groupBy('alasan_pelanggarans.teks');
+
+        // Alasan custom (alasan_custom tidak null, alasan_id null)
+        $queryCustom = DB::table('pelanggaran_siswas')
+            ->join('barcode_harians', 'pelanggaran_siswas.barcode_id', '=', 'barcode_harians.id')
+            ->whereNull('pelanggaran_siswas.alasan_id')
+            ->whereNotNull('pelanggaran_siswas.alasan_custom')
+            ->where('pelanggaran_siswas.alasan_custom', '!=', '')
+            ->select('pelanggaran_siswas.alasan_custom as alasan', DB::raw('COUNT(*) as total'))
+            ->when($this->filterJenis, fn($q) => $q->where('barcode_harians.jenis_pelanggaran_id', $this->filterJenis))
+            ->groupBy('pelanggaran_siswas.alasan_custom');
+
+        $topAlasan = $queryAlasan->unionAll($queryCustom)
+            ->orderByDesc('total')
             ->take(10)
             ->get();
 
@@ -75,6 +103,8 @@ class AnalitikPelanggaran extends Page
             'monthlyStats',
             'topViolations',
             'classRanking',
+            'topAlasan',
+            'jenisList',
             'appName',
             'instansiName',
             'user'

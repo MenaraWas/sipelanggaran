@@ -106,6 +106,57 @@
                 </div>
             </div>
         </div>
+
+        {{-- Statistik Alasan Pelanggaran --}}
+        <div class="ap-alasan-card">
+            <div class="ap-alasan-header">
+                <div>
+                    <h3 class="ap-alasan-title">Alasan Pelanggaran Terbanyak</h3>
+                    <p style="font-size:11px; color:#94a3b8; margin-top:2px;">Berdasarkan alasan yang dipilih siswa saat konfirmasi</p>
+                </div>
+                <div class="ap-alasan-filter">
+                    <select wire:model.live="filterJenis">
+                        <option value="">Semua Jenis Pelanggaran</option>
+                        @foreach($jenisList as $jenis)
+                            <option value="{{ $jenis->id }}">{{ $jenis->nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            @if($topAlasan->isEmpty())
+                <div class="ap-empty-state">
+                    Belum ada data alasan yang tercatat.
+                </div>
+            @else
+                <table class="ap-alasan-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Alasan</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $maxAlasan = $topAlasan->first()->total ?: 1; @endphp
+                        @foreach($topAlasan as $index => $item)
+                        <tr>
+                            <td style="width:56px;">
+                                <span class="ap-alasan-rank {{ $index < 3 ? 'top' : '' }}">{{ $index + 1 }}</span>
+                            </td>
+                            <td>
+                                <div style="font-weight:700; margin-bottom:5px;">{{ $item->alasan }}</div>
+                                <div class="ap-progress-bg" style="max-width:320px;">
+                                    <div class="ap-progress-bar" style="width: {{ ($item->total / $maxAlasan) * 100 }}%"></div>
+                                </div>
+                            </td>
+                            <td>{{ $item->total }}×</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+        </div>
     </main>
 
     <style>
@@ -166,5 +217,20 @@
         .ap-item-title-v2 { font-size: 14px; font-weight: 800; color: #1e293b; }
         .ap-item-sub { font-size: 11px; font-weight: 600; color: #94a3b8; }
         .ap-item-val-v2 { font-size: 18px; font-weight: 900; color: #1e293b; line-height: 1; }
+    
+        /* Alasan section */
+        .ap-alasan-card { background: white; border-radius: 24px; border: 1.5px solid #f1f5f9; overflow: hidden; margin-top: 1.5rem; }
+        .ap-alasan-header { padding: 1.25rem 1.5rem; border-bottom: 1.5px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+        .ap-alasan-title { font-size: 15px; font-weight: 800; color: #1e293b; }
+        .ap-alasan-filter select { font-size: 12px; font-weight: 600; color: #374151; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 6px 12px; outline: none; cursor: pointer; }
+        .ap-alasan-table { width: 100%; border-collapse: collapse; }
+        .ap-alasan-table th { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 1.5rem; text-align: left; background: #fafafa; }
+        .ap-alasan-table th:last-child { text-align: right; }
+        .ap-alasan-table td { padding: 12px 1.5rem; border-top: 1px solid #f1f5f9; font-size: 13px; color: #1e293b; vertical-align: middle; }
+        .ap-alasan-table td:last-child { text-align: right; font-weight: 900; color: #1e293b; }
+        .ap-alasan-table tr:hover td { background: #f8fafc; }
+        .ap-alasan-rank { display: inline-flex; width: 26px; height: 26px; border-radius: 8px; background: #f1f5f9; color: #64748b; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
+        .ap-alasan-rank.top { background: #515c71; color: white; }
+        .ap-empty-state { padding: 2.5rem; text-align: center; color: #94a3b8; font-size: 13px; font-weight: 600; }
     </style>
 </div>
