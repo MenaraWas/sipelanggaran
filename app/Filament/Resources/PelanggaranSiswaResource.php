@@ -49,6 +49,7 @@ class PelanggaranSiswaResource extends Resource
     {
         return $table
             ->poll('3s')
+            ->modifyQueryUsing(fn ($query) => $query->with(['alasan']))
             ->columns([
                 Tables\Columns\TextColumn::make('siswa.nama')
                     ->label('Nama Siswa')

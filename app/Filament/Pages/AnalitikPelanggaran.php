@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Models\PelanggaranSiswa;
-use App\Models\Siswa;
 use App\Models\JenisPelanggaran;
 use App\Models\Setting;
 use Filament\Pages\Page;

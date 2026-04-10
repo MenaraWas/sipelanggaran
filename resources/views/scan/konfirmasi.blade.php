@@ -50,6 +50,21 @@
 
     <div class="flex-1 px-4 py-6 flex flex-col gap-4">
 
+        {{-- Welcome banner untuk siswa baru --}}
+        @if(session('welcome_new'))
+        <div class="bg-green-50 border border-green-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-xs text-green-600 font-semibold">Akun berhasil dibuat!</p>
+                <p class="text-sm font-bold text-green-800">Selamat datang, {{ session('welcome_new') }} 👋</p>
+            </div>
+        </div>
+        @endif
+
         {{-- Info Pelanggaran --}}
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 text-center">
             <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">

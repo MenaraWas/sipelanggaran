@@ -58,7 +58,10 @@ class SiswaResource extends Resource
             ->poll('3s')
             ->columns([
                 Tables\Columns\TextColumn::make('nis')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color(fn(?string $state): string => str_starts_with((string) $state, 'REG-') ? 'warning' : 'gray')
+                    ->tooltip(fn(?string $state): ?string => str_starts_with((string) $state, 'REG-') ? 'NIS sementara — perlu diperbarui admin' : null),
                 Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kelas')

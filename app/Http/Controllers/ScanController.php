@@ -82,12 +82,16 @@ class ScanController extends Controller
         }
 
         // Proses alasan
-        $alasanId   = null;
+        $alasanId     = null;
         $alasanCustom = null;
-        $alasanInput = $request->input('alasan_id');
+        $alasanInput  = $request->input('alasan_id');
 
         if ($alasanInput === 'lainnya') {
-            $alasanCustom = trim($request->input('alasan_custom'));
+            $alasanCustom = substr(trim($request->input('alasan_custom', '')), 0, 255);
+            // Kosongkan jika hanya whitespace
+            if ($alasanCustom === '') {
+                $alasanCustom = null;
+            }
         } elseif (!empty($alasanInput)) {
             $alasanId = (int) $alasanInput;
         }

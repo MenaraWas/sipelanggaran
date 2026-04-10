@@ -149,6 +149,7 @@ class ScanAuthController extends Controller
         Auth::guard('siswa')->login($siswa);
         $request->session()->forget('scan_auth_email');
         $request->session()->regenerate();
+        $request->session()->flash('welcome_new', $siswa->nama);
 
         return redirect()->route('scan.konfirmasi', $token);
     }
