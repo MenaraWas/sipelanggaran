@@ -27,9 +27,9 @@ Route::post('/logout-siswa', [SiswaAuthController::class, 'logout'])->name('sisw
 
 // Auth via Scan (email-based, tanpa password)
 Route::get('/scan/{token}/auth',      [ScanAuthController::class, 'showEmailForm'])->name('scan.auth');
-Route::post('/scan/{token}/auth',     [ScanAuthController::class, 'prosesEmail'])->name('scan.auth.proses');
+Route::post('/scan/{token}/auth',     [ScanAuthController::class, 'prosesEmail'])->name('scan.auth.proses')->middleware('throttle:10,1');
 Route::get('/scan/{token}/register',  [ScanAuthController::class, 'showRegisterForm'])->name('scan.register');
-Route::post('/scan/{token}/register', [ScanAuthController::class, 'prosesRegister'])->name('scan.register.proses');
+Route::post('/scan/{token}/register', [ScanAuthController::class, 'prosesRegister'])->name('scan.register.proses')->middleware('throttle:5,1');
 
 // Scan konfirmasi & proses (auth dihandle manual di controller)
 Route::get('/scan/{token}',  [ScanController::class, 'konfirmasi'])->name('scan.konfirmasi');

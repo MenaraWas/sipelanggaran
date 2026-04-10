@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BarcodeHarian;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,10 +10,30 @@ use Illuminate\Support\Facades\Auth;
 class ScanAuthController extends Controller
 {
     /**
+     * Validasi token barcode — kembalikan barcode atau null jika tidak valid.
+     */
+    private function resolveBarcode(string $token): ?BarcodeHarian
+    {
+        $barcode = BarcodeHarian::where('token', $token)->first();
+        if (!$barcode || $barcode->isExpired()) {
+            return null;
+        }
+        return $barcode;
+    }
+
+    /**
      * Tampilkan form input email sebelum scan.
      */
     public function showEmailForm(string $token)
     {
+        // Validasi token terlebih dahulu
+        if (!$this->resolveBarcode($token)) {
+            return view('scan.hasil', [
+                'status'  => 'error',
+                'message' => 'Barcode tidak ditemukan atau sudah kedaluwarsa.',
+            ]);
+        }
+
         // Sudah login → langsung ke konfirmasi
         if (Auth::guard('siswa')->check()) {
             return redirect()->route('scan.konfirmasi', $token);
@@ -26,11 +47,19 @@ class ScanAuthController extends Controller
      */
     public function prosesEmail(Request $request, string $token)
     {
+        // Validasi token
+        if (!$this->resolveBarcode($token)) {
+            return view('scan.hasil', [
+                'status'  => 'error',
+                'message' => 'Barcode tidak ditemukan atau sudah kedaluwarsa.',
+            ]);
+        }
+
         $request->validate([
             'email' => ['required', 'email'],
         ], [
             'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'email.email'    => 'Format email tidak valid.',
         ]);
 
         $email = strtolower(trim($request->email));
@@ -53,6 +82,14 @@ class ScanAuthController extends Controller
      */
     public function showRegisterForm(Request $request, string $token)
     {
+        // Validasi token
+        if (!$this->resolveBarcode($token)) {
+            return view('scan.hasil', [
+                'status'  => 'error',
+                'message' => 'Barcode tidak ditemukan atau sudah kedaluwarsa.',
+            ]);
+        }
+
         if (Auth::guard('siswa')->check()) {
             return redirect()->route('scan.konfirmasi', $token);
         }
