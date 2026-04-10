@@ -11,6 +11,11 @@ class ScanController extends Controller
 {
     public function konfirmasi(string $token)
     {
+        // Redirect ke auth flow jika belum login
+        if (!auth('siswa')->check()) {
+            return redirect()->route('scan.auth', $token);
+        }
+
         $barcode = BarcodeHarian::where('token', $token)
             ->with('jenisPelanggaran')
             ->firstOrFail();
@@ -29,6 +34,11 @@ class ScanController extends Controller
 
     public function proses(Request $request, string $token)
     {
+        // Redirect ke auth flow jika belum login
+        if (!auth('siswa')->check()) {
+            return redirect()->route('scan.auth', $token);
+        }
+
         $barcode = BarcodeHarian::where('token', $token)
             ->with('jenisPelanggaran')
             ->firstOrFail();

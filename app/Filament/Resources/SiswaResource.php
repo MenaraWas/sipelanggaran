@@ -63,6 +63,18 @@ class SiswaResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('jurusan')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable()
+                    ->default('-')
+                    ->toggleable(),
+                Tables\Columns\IconColumn::make('is_verified')
+                    ->label('Status')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-badge')
+                    ->falseIcon('heroicon-o-clock')
+                    ->trueColor('success')
+                    ->falseColor('warning')
+                    ->tooltip(fn($record) => $record->is_verified ? 'Terverifikasi' : 'Belum Diverifikasi'),
                 Tables\Columns\TextColumn::make('pelanggaran_count')
                     ->label('Total Pelanggaran')
                     ->counts([
@@ -81,18 +93,37 @@ class SiswaResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
                 Tables\Filters\SelectFilter::make('kelas')
                     ->options(fn() => Siswa::distinct()->pluck('kelas', 'kelas')),
                 Tables\Filters\SelectFilter::make('jurusan')
                     ->options(fn() => Siswa::distinct()->pluck('jurusan', 'jurusan')),
+                Tables\Filters\TernaryFilter::make('is_verified')
+                    ->label('Status Akun')
+                    ->trueLabel('Terverifikasi')
+                    ->falseLabel('Belum Diverifikasi')
+                    ->placeholder('Semua'),
             ])
             ->actions([
+                Tables\Actions\Action::make('verifikasi')
+                    ->label('Verifikasi')
+                    ->icon('heroicon-o-check-badge')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Verifikasi Akun Siswa?')
+                    ->modalDescription('Akun ini akan ditandai sebagai terverifikasi.')
+                    ->action(fn(Siswa $record) => $record->update(['is_verified' => true]))
+                    ->visible(fn(Siswa $record) => !$record->is_verified),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('verifikasi_terpilih')
+                        ->label('Verifikasi Terpilih')
+                        ->icon('heroicon-o-check-badge')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn($records) => $records->each->update(['is_verified' => true])),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

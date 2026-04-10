@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Siswa extends Authenticatable
 {
     protected $table = 'siswas';
-    protected $fillable = ['nis', 'nama', 'kelas', 'jurusan', 'email', 'password'];
+    protected $fillable = ['nis', 'nama', 'kelas', 'jurusan', 'email', 'password', 'is_verified'];
 
     protected $hidden = [
         'password',
@@ -16,7 +16,8 @@ class Siswa extends Authenticatable
     ];
 
     protected $casts = [
-        'password' => 'hashed',
+        'password'    => 'hashed',
+        'is_verified' => 'boolean',
     ];
 
     public function pelanggaran()
