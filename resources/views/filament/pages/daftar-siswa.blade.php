@@ -35,19 +35,35 @@
                 </div>
             </section>
 
-            {{-- Mobile Action Buttons --}}
-            <div class="ds-mobile-actions">
-                <button class="ds-btn-outline">
+            {{-- Desktop & Mobile Action Buttons --}}
+            <div class="ds-action-row">
+                <button class="ds-btn-outline" wire:click="mountAction('filter')">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
                     </svg>
-                    Filter
+                    <span>Filter</span>
                 </button>
+                
+                <div class="ds-btn-group">
+                    <button wire:click="mountAction('import_profil')" class="ds-btn-outline">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        <span>Import Profil</span>
+                    </button>
+                    <button wire:click="mountAction('update_email')" class="ds-btn-outline">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                        </svg>
+                        <span>Update Email</span>
+                    </button>
+                </div>
+
                 <a href="/admin/siswas/create" class="ds-btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                     </svg>
-                    Siswa Baru
+                    <span>Siswa Baru</span>
                 </a>
             </div>
 
@@ -107,9 +123,14 @@
                 @endforelse
             </div>
 
+            {{-- Pagination --}}
+            <div class="ds-pagination-wrap">
+                {{ $siswas->links() }}
+            </div>
+
             {{-- Footer count --}}
-            @if ($siswas->count() > 0)
-                <p class="ds-count-text">Menampilkan {{ $siswas->count() }} siswa</p>
+            @if ($siswas->total() > 0)
+                <p class="ds-count-text">Menampilkan {{ $siswas->firstItem() }} - {{ $siswas->lastItem() }} dari {{ $siswas->total() }} siswa</p>
             @endif
 
         </main>
@@ -235,51 +256,76 @@
             box-shadow: 0 0 0 4px rgba(81, 92, 113, 0.08);
         }
 
-        /* ── MOBILE ACTIONS ── */
-        .ds-mobile-actions {
+        /* ── ACTION ROW ── */
+        .ds-action-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
         }
 
-        @media (min-width: 768px) {
-            .ds-mobile-actions { display: none; }
+        .ds-btn-group {
+            display: flex;
+            gap: 12px;
+            flex: 1;
         }
 
         .ds-btn-outline {
-            flex: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 11px 16px;
+            padding: 10px 16px;
             background: white;
-            border: 1.5px solid #e0e3e8;
+            border: 1.5px solid #e2e8f0;
             border-radius: 12px;
             font-size: 13px;
             font-weight: 600;
-            color: #515c71;
+            color: #475569;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .ds-btn-outline:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
         .ds-btn-outline:active { transform: scale(0.97); }
 
         .ds-btn-primary {
-            flex: 2;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 11px 20px;
+            gap: 10px;
+            padding: 10px 24px;
             background: #515c71;
-            border-radius: 12px;
-            font-size: 13px;
+            border-radius: 14px;
+            font-size: 14px;
             font-weight: 700;
             color: white;
             text-decoration: none;
-            transition: all 0.15s;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(81, 92, 113, 0.2);
+        }
+
+        .ds-btn-primary:hover { 
+            background: #3e4a5e;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(81, 92, 113, 0.3);
+        }
+
+        .ds-btn-primary:active { transform: scale(0.97); }
+
+        @media (max-width: 640px) {
+            .ds-action-row { flex-direction: column; }
+            .ds-btn-group { flex-direction: row; }
+            .ds-btn-group .ds-btn-outline { flex: 1; padding: 12px 10px; font-size: 12px; }
+            .ds-btn-primary { width: 100%; border-radius: 12px; }
         }
 
         .ds-btn-primary:hover { background: #3e4a5e; }
@@ -438,6 +484,13 @@
             font-weight: 400;
         }
 
+        /* ── PAGINATION ── */
+        .ds-pagination-wrap {
+            margin-top: 32px;
+            display: flex;
+            justify-content: center;
+        }
+
         /* ── COUNT TEXT ── */
         .ds-count-text {
             text-align: center;
@@ -485,4 +538,5 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <x-filament-actions::modals />
 </div>

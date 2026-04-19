@@ -19,66 +19,76 @@ class AnalitikPelanggaran extends Page
 
     protected static string $view = 'filament.pages.analistik-pelanggaran';
 
-    // Filter aktif untuk statistik alasan
+    // Filter aktif
     public ?int $filterJenis = null;
+    public ?string $dateFrom = null;
+    public ?string $dateTo = null;
+
+    public function mount()
+    {
+        $this->dateTo = now()->toDateString();
+        $this->dateFrom = now()->subDays(30)->toDateString();
+    }
 
     public function getViewData(): array
     {
-        $now = Carbon::now();
+        $start = Carbon::parse($this->dateFrom)->startOfDay();
+        $end = Carbon::parse($this->dateTo)->endOfDay();
         
-        // 1. Statistik Mingguan (7 Hari Terakhir)
-        $weeklyStats = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $date = $now->copy()->subDays($i);
-            $count = PelanggaranSiswa::whereDate('scan_at', $date)->count();
-            $weeklyStats[] = [
-                'label' => $date->translatedFormat('D'),
+        // 1. Statistik Harian dalam Range (Max 31 hari untuk trend detail)
+        $dailyStats = [];
+        $diffDays = $start->diffInDays($end);
+        
+        // Jika range < 60 hari, tampilkan harian. Jika > 60 hari, tampilkan mingguan/bulanan.
+        // Untuk sekarang kita asumsikan harian (karena default 30 hari)
+        $tempStart = $start->copy();
+        while ($tempStart <= $end) {
+            $count = PelanggaranSiswa::whereDate('scan_at', $tempStart)->count();
+            $dailyStats[] = [
+                'label' => $tempStart->translatedFormat('d M'),
                 'count' => $count,
-                'full_date' => $date->toDateString(),
+                'full_date' => $tempStart->toDateString(),
             ];
+            $tempStart->addDay();
         }
 
-        // 2. Statistik Bulanan (30 Hari Terakhir / Grouped by Week)
-        $monthlyStats = [];
-        for ($i = 3; $i >= 0; $i--) {
-             $start = $now->copy()->subWeeks($i)->startOfWeek();
-             $end = $now->copy()->subWeeks($i)->endOfWeek();
-             $count = PelanggaranSiswa::whereBetween('scan_at', [$start, $end])->count();
-             $monthlyStats[] = [
-                 'label' => 'Mgg ' . (4 - $i),
-                 'count' => $count,
-             ];
-        }
-
-        // 3. Jenis Pelanggaran Terbanyak
-        $topViolations = JenisPelanggaran::withCount(['pelanggaran as total_count'])
+        // 2. Jenis Pelanggaran Terbanyak dalam Range
+        $topViolations = JenisPelanggaran::withCount(['pelanggaran as total_count' => function($query) use ($start, $end) {
+                $query->whereBetween('scan_at', [$start, $end]);
+            }])
             ->orderByDesc('total_count')
             ->take(5)
             ->get();
 
-        // 4. Ranking Kelas Terbersih (Poin Terkecil)
+        // 3. Ranking Kelas Terbersih dalam Range (Berdasarkan poin terkecil)
         $classRanking = DB::table('siswas')
             ->leftJoin('pelanggaran_siswas', 'siswas.id', '=', 'pelanggaran_siswas.siswa_id')
-            ->select('siswas.kelas', DB::raw('SUM(pelanggaran_siswas.nilai) as total_poin'), DB::raw('COUNT(pelanggaran_siswas.id) as total_kasus'))
+            ->where(function($q) use ($start, $end) {
+                $q->whereBetween('pelanggaran_siswas.scan_at', [$start, $end])
+                  ->orWhereNull('pelanggaran_siswas.id');
+            })
+            ->select('siswas.kelas', DB::raw('SUM(COALESCE(pelanggaran_siswas.nilai, 0)) as total_poin'), DB::raw('COUNT(pelanggaran_siswas.id) as total_kasus'))
             ->groupBy('siswas.kelas')
             ->orderBy('total_poin', 'asc')
             ->take(10)
             ->get();
 
-        // 5. Top Alasan (dengan filter jenis pelanggaran opsional)
+        // 4. Top Alasan dalam Range
         $jenisList = JenisPelanggaran::orderBy('nama')->get();
 
-        // Alasan dari daftar admin (alasan_id tidak null)
+        // Alasan dari daftar admin
         $queryAlasan = DB::table('pelanggaran_siswas')
             ->join('alasan_pelanggarans', 'pelanggaran_siswas.alasan_id', '=', 'alasan_pelanggarans.id')
             ->join('barcode_harians', 'pelanggaran_siswas.barcode_id', '=', 'barcode_harians.id')
+            ->whereBetween('pelanggaran_siswas.scan_at', [$start, $end])
             ->select('alasan_pelanggarans.teks as alasan', DB::raw('COUNT(*) as total'))
             ->when($this->filterJenis, fn($q) => $q->where('barcode_harians.jenis_pelanggaran_id', $this->filterJenis))
             ->groupBy('alasan_pelanggarans.teks');
 
-        // Alasan custom (alasan_custom tidak null, alasan_id null)
+        // Alasan custom
         $queryCustom = DB::table('pelanggaran_siswas')
             ->join('barcode_harians', 'pelanggaran_siswas.barcode_id', '=', 'barcode_harians.id')
+            ->whereBetween('pelanggaran_siswas.scan_at', [$start, $end])
             ->whereNull('pelanggaran_siswas.alasan_id')
             ->whereNotNull('pelanggaran_siswas.alasan_custom')
             ->where('pelanggaran_siswas.alasan_custom', '!=', '')
@@ -98,8 +108,7 @@ class AnalitikPelanggaran extends Page
         $user = auth()->user();
 
         return compact(
-            'weeklyStats',
-            'monthlyStats',
+            'dailyStats',
             'topViolations',
             'classRanking',
             'topAlasan',

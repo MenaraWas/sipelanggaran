@@ -25,30 +25,65 @@ class SiswaResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nis')
-                    ->maxLength(20)
-                    ->nullable()
-                    ->unique(ignoreRecord: true)
-                    ->helperText('Kosongkan jika belum diketahui (siswa daftar sendiri).'),
-                Forms\Components\TextInput::make('nama')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('kelas')
-                    ->required()
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('jurusan')
-                    ->required()
-                    ->maxLength(50),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->unique(ignoreRecord: true)
-                    ->nullable()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->dehydrateStateUsing(fn($state) => \Illuminate\Support\Facades\Hash::make($state))
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context): bool => $context === 'create'),
+                Forms\Components\Section::make('Informasi Dasar')
+                    ->schema([
+                        Forms\Components\TextInput::make('nis')
+                            ->label('NISN')
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(20),
+                        Forms\Components\TextInput::make('nik')
+                            ->label('NIK')
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(20),
+                        Forms\Components\TextInput::make('nama')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\Select::make('jenis_kelamin')
+                            ->options([
+                                'Laki-laki' => 'Laki-laki',
+                                'Perempuan' => 'Perempuan',
+                            ]),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Kelahiran & Alamat')
+                    ->schema([
+                        Forms\Components\TextInput::make('tempat_lahir'),
+                        Forms\Components\DatePicker::make('tanggal_lahir'),
+                        Forms\Components\Textarea::make('alamat')
+                            ->columnSpanFull(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Akademik')
+                    ->schema([
+                        Forms\Components\TextInput::make('kelas')
+                            ->required()
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('jurusan')
+                            ->maxLength(50),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Kontak & Orang Tua')
+                    ->schema([
+                        Forms\Components\TextInput::make('no_telepon')
+                            ->tel(),
+                        Forms\Components\TextInput::make('nama_ayah'),
+                        Forms\Components\TextInput::make('nama_ibu'),
+                        Forms\Components\TextInput::make('nama_wali'),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Akun & Keamanan')
+                    ->schema([
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->dehydrateStateUsing(fn($state) => filled($state) ? \Illuminate\Support\Facades\Hash::make($state) : null)
+                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn(string $context): bool => $context === 'create')
+                            ->placeholder(fn(string $context): string => $context === 'edit' ? 'Kosongkan jika tidak ingin mengubah' : ''),
+                    ])->columns(2),
             ]);
     }
 
@@ -120,6 +155,72 @@ class SiswaResource extends Resource
                     ->visible(fn(Siswa $record) => !$record->is_verified),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('import_profil')
+                    ->label('Import Profil (Excel 1)')
+                    ->icon('heroicon-o-document-arrow-up')
+                    ->color('info')
+                    ->form([
+                        Forms\Components\FileUpload::make('file')
+                            ->label('Pilih File Excel Profil')
+                            ->required()
+                            ->disk('local')
+                            ->directory('temp-imports')
+                            ->visibility('private')
+                    ])
+                    ->action(function (array $data) {
+                        try {
+                            $file = storage_path('app/' . $data['file']);
+                            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\SiswaImport, $file);
+                            \Filament\Notifications\Notification::make()
+                                ->title('Import Berhasil')
+                                ->body('Data profil siswa telah diperbarui/ditambahkan.')
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Import Gagal')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+                Tables\Actions\Action::make('update_email')
+                    ->label('Update Email (Excel 2)')
+                    ->icon('heroicon-o-envelope')
+                    ->color('warning')
+                    ->form([
+                        Forms\Components\FileUpload::make('file')
+                            ->label('Pilih File Excel Akun Email')
+                            ->required()
+                            ->disk('local')
+                            ->directory('temp-imports')
+                    ])
+                    ->action(function (array $data) {
+                        try {
+                            $file = storage_path('app/' . $data['file']);
+                            $import = new \App\Imports\SiswaEmailUpdate;
+                            \Maatwebsite\Excel\Facades\Excel::import($import, $file);
+                            
+                            $msg = "Berhasil update {$import->updatedCount} email.";
+                            if ($import->skippedCount > 0) {
+                                $msg .= " Melewati {$import->skippedCount} data.";
+                            }
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Proses Selesai')
+                                ->body($msg)
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Terjadi Kesalahan')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

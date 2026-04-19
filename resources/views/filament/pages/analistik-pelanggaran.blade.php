@@ -1,4 +1,5 @@
 <div class="ap-wrapper md3-animate-page">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <x-md3-top-bar :title="$appName" :subtitle="$instansiName" icon="analytics" :user="$user" />
 
     <main class="ap-main">
@@ -9,50 +10,31 @@
                 <h2 class="ap-title">Statistik Sekolah</h2>
                 <p class="ap-subtitle">Data kedisiplinan siswa berbasis waktu dan kategori.</p>
             </div>
+            <div class="ap-header-filters">
+                <div class="ap-filter-group">
+                    <label>Dari Tanggal</label>
+                    <input type="date" wire:model.live="dateFrom">
+                </div>
+                <div class="ap-filter-group">
+                    <label>Sampai Tanggal</label>
+                    <input type="date" wire:model.live="dateTo">
+                </div>
+            </div>
         </section>
 
         {{-- Trends Section --}}
-        <div class="ap-grid">
-            {{-- Weekly Chart --}}
-            <div class="ap-card">
+        <div class="ap-trend-section" 
+             x-data="chartManager(@js($dailyStats))"
+             x-init="initCharts()"
+             x-effect="updateCharts(@js($dailyStats))">
+            {{-- Trend Utama --}}
+            <div class="ap-card ap-full-width">
                 <div class="ap-card-header">
-                    <h3 class="ap-card-title">Tren Mingguan</h3>
-                    <span class="ap-card-badge">7 Hari Terakhir</span>
+                    <h3 class="ap-card-title">Tren Pelanggaran</h3>
+                    <span class="ap-card-badge">Periode Terpilih</span>
                 </div>
-                <div class="ap-chart-container">
-                    @php $maxW = collect($weeklyStats)->max('count') ?: 1; @endphp
-                    <div class="ap-chart">
-                        @foreach($weeklyStats as $stat)
-                            <div class="ap-chart-col">
-                                <span class="ap-chart-val">{{ $stat['count'] }}</span>
-                                <div class="ap-chart-bar {{ $stat['count'] == $maxW ? 'active' : '' }}"
-                                    style="height: {{ ($stat['count'] / $maxW) * 100 }}%">
-                                </div>
-                                <span class="ap-chart-label">{{ $stat['label'] }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-
-            {{-- Monthly Chart --}}
-            <div class="ap-card">
-                <div class="ap-card-header">
-                    <h3 class="ap-card-title">Tren Bulanan</h3>
-                    <span class="ap-card-badge">4 Minggu Terakhir</span>
-                </div>
-                <div class="ap-chart-container">
-                    @php $maxM = collect($monthlyStats)->max('count') ?: 1; @endphp
-                    <div class="ap-chart">
-                        @foreach($monthlyStats as $stat)
-                            <div class="ap-chart-col">
-                                <span class="ap-chart-val">{{ $stat['count'] }}</span>
-                                <div class="ap-chart-bar" style="height: {{ ($stat['count'] / $maxM) * 100 }}%">
-                                </div>
-                                <span class="ap-chart-label">{{ $stat['label'] }}</span>
-                            </div>
-                        @endforeach
-                    </div>
+                <div class="ap-chart-container-v2">
+                    <canvas id="mainTrendChart"></canvas>
                 </div>
             </div>
         </div>
@@ -124,7 +106,7 @@
 
             @if($topAlasan->isEmpty())
                 <div class="ap-empty-state">
-                    Belum ada data alasan yang tercatat.
+                    Belum ada data alasan yang tercatat pada periode ini.
                 </div>
             @else
                 <table class="ap-alasan-table">
@@ -204,6 +186,11 @@
 
         .ap-header {
             margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .ap-eyebrow {
@@ -228,17 +215,37 @@
             margin-top: 4px;
         }
 
-        .ap-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+        .ap-header-filters {
+            display: flex;
+            gap: 1rem;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border: 1.5px solid #f1f5f9;
         }
 
-        @media (min-width: 768px) {
-            .ap-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        .ap-filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .ap-filter-group label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .ap-filter-group input {
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e293b;
+            outline: none;
         }
 
         .ap-card {
@@ -271,55 +278,19 @@
             border-radius: 99px;
         }
 
-        .ap-chart-container {
-            height: 160px;
-            display: flex;
-            align-items: flex-end;
+        .ap-trend-section {
+            margin-bottom: 2rem;
+            margin-top: 1rem;
         }
 
-        .ap-chart {
-            display: flex;
+        .ap-full-width {
+            grid-column: 1 / -1;
+        }
+
+        .ap-chart-container-v2 {
+            position: relative;
+            height: 320px;
             width: 100%;
-            height: 100%;
-            align-items: flex-end;
-            gap: 8px;
-        }
-
-        .ap-chart-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-            gap: 4px;
-        }
-
-        .ap-chart-val {
-            font-size: 10px;
-            font-weight: 800;
-            color: #515c71;
-            margin-bottom: 4px;
-        }
-
-        .ap-chart-bar {
-            width: 100%;
-            background: #eceef2;
-            border-radius: 6px 6px 2px 2px;
-            transition: all 0.5s ease;
-            min-height: 4px;
-        }
-
-        .ap-chart-bar.active {
-            background: #515c71;
-        }
-
-        .ap-chart-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: #94a3b8;
-            margin-top: 4px;
-            text-transform: uppercase;
         }
 
         .ap-grid-v2 {
@@ -433,7 +404,6 @@
             line-height: 1;
         }
 
-        /* Alasan section */
         .ap-alasan-card {
             background: white;
             border-radius: 24px;
@@ -534,4 +504,73 @@
             font-weight: 600;
         }
     </style>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('chartManager', (initialData) => ({
+                chart: null,
+                initCharts() {
+                    const ctx = document.getElementById('mainTrendChart').getContext('2d');
+                    this.chart = new Chart(ctx, {
+                        type: 'line',
+                        data: this.formatData(initialData),
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: '#1e293b',
+                                    titleFont: { weight: 'bold' },
+                                    padding: 12,
+                                    cornerRadius: 12,
+                                    displayColors: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 1, color: '#94a3b8', font: { weight: 'bold', size: 10 } },
+                                    grid: { color: '#f1f5f9' }
+                                },
+                                x: {
+                                    ticks: { color: '#94a3b8', font: { weight: 'bold', size: 10 } },
+                                    grid: { display: false }
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index',
+                            },
+                        }
+                    });
+                },
+                formatData(data) {
+                    return {
+                        labels: data.map(d => d.label),
+                        datasets: [{
+                            label: 'Jumlah Pelanggaran',
+                            data: data.map(d => d.count),
+                            borderColor: '#515c71',
+                            backgroundColor: 'rgba(81, 92, 113, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#515c71',
+                            pointBorderWidth: 2
+                        }]
+                    };
+                },
+                updateCharts(newData) {
+                    if (this.chart) {
+                        this.chart.data = this.formatData(newData);
+                        this.chart.update();
+                    }
+                }
+            }));
+        });
+    </script>
 </div>
